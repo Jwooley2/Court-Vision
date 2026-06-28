@@ -1,11 +1,20 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-export default async function PlayersPage() {
-  const { data: players, error } = await supabase
-    .from("players")
-    .select("*")
-    .order("name");
+export default async function PlayersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>;
+}) {
+  const { search } = await searchParams;
+
+  let query = supabase.from("players").select("*").order("name");
+
+  if (search) {
+    query = query.ilike("name", `%${search}%`);
+  }
+
+  const { data: players, error } = await query;
 
   if (error) {
     return (
@@ -24,6 +33,52 @@ export default async function PlayersPage() {
 
       <p style={{ marginBottom: "2rem" }}>
         Search and explore the Court Vision player database.
+      </p>
+
+      <form action="/players" style={{ marginBottom: "2rem" }}>
+        <input
+          type="text"
+          name="search"
+          placeholder="Search players..."
+          defaultValue={search || ""}
+          style={{
+            padding: "0.75rem",
+            width: "100%",
+            maxWidth: "400px",
+            borderRadius: "8px",
+            border: "1px solid #444",
+            marginRight: "0.5rem",
+          }}
+        />
+
+        <button
+          type="submit"
+          style={{
+            padding: "0.75rem 1rem",
+            borderRadius: "8px",
+            border: "1px solid #444",
+            cursor: "pointer",
+          }}
+        >
+          Search
+        </button>
+
+        {search && (
+          <Link
+            href="/players"
+            style={{
+              marginLeft: "1rem",
+              color: "inherit",
+            }}
+          >
+            Clear
+          </Link>
+        )}
+      </form>
+
+      <p style={{ marginBottom: "1rem", color: "#bbb" }}>
+        Showing {players?.length || 0} player{players?.length === 1 ? "" : "s"}
+        {search ? ` for "${search}"` : ""}
       </p>
 
       <div
@@ -61,9 +116,7 @@ export default async function PlayersPage() {
               {player.championships} Championships • {player.mvps} MVPs
             </p>
 
-            <p>
-              Hall of Fame: {player.hall_of_fame ? "Yes" : "No"}
-            </p>
+            <p>Hall of Fame: {player.hall_of_fame ? "Yes" : "No"}</p>
           </Link>
         ))}
       </div>
