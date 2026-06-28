@@ -4,14 +4,21 @@ import { supabase } from "@/lib/supabase";
 export default async function PlayersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>;
+  searchParams: Promise<{
+    search?: string;
+    position?: string;
+  }>;
 }) {
-  const { search } = await searchParams;
+  const { search, position } = await searchParams;
 
   let query = supabase.from("players").select("*").order("name");
 
   if (search) {
     query = query.ilike("name", `%${search}%`);
+  }
+
+  if (position) {
+    query = query.eq("position", position);
   }
 
   const { data: players, error } = await query;
@@ -35,7 +42,16 @@ export default async function PlayersPage({
         Search and explore the Court Vision player database.
       </p>
 
-      <form action="/players" style={{ marginBottom: "2rem" }}>
+      <form
+        action="/players"
+        style={{
+          display: "flex",
+          gap: "0.75rem",
+          alignItems: "center",
+          flexWrap: "wrap",
+          marginBottom: "2rem",
+        }}
+      >
         <input
           type="text"
           name="search"
@@ -43,13 +59,28 @@ export default async function PlayersPage({
           defaultValue={search || ""}
           style={{
             padding: "0.75rem",
-            width: "100%",
-            maxWidth: "400px",
+            width: "300px",
             borderRadius: "8px",
             border: "1px solid #444",
-            marginRight: "0.5rem",
           }}
         />
+
+        <select
+          name="position"
+          defaultValue={position || ""}
+          style={{
+            padding: "0.75rem",
+            borderRadius: "8px",
+            border: "1px solid #444",
+          }}
+        >
+          <option value="">All Positions</option>
+          <option value="PG">Point Guard</option>
+          <option value="SG">Shooting Guard</option>
+          <option value="SF">Small Forward</option>
+          <option value="PF">Power Forward</option>
+          <option value="C">Center</option>
+        </select>
 
         <button
           type="submit"
@@ -63,12 +94,12 @@ export default async function PlayersPage({
           Search
         </button>
 
-        {search && (
+        {(search || position) && (
           <Link
             href="/players"
             style={{
-              marginLeft: "1rem",
               color: "inherit",
+              textDecoration: "none",
             }}
           >
             Clear
@@ -77,8 +108,10 @@ export default async function PlayersPage({
       </form>
 
       <p style={{ marginBottom: "1rem", color: "#bbb" }}>
-        Showing {players?.length || 0} player{players?.length === 1 ? "" : "s"}
+        Showing {players?.length || 0} player
+        {players?.length === 1 ? "" : "s"}
         {search ? ` for "${search}"` : ""}
+        {position ? ` (${position})` : ""}
       </p>
 
       <div
