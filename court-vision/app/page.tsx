@@ -1,48 +1,51 @@
-import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
-export default async function Home() {
-  const { data: players, error } = await supabase
-    .from("players")
-    .select("*");
-
+export default function Home() {
   return (
-    <main style={{ padding: "2rem" }}>
-      <h1>Court Vision</h1>
+    <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1 style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>
+        Court Vision
+      </h1>
 
-      <h2>Players</h2>
+      <p style={{ fontSize: "1.2rem", marginBottom: "2rem" }}>
+        Discover, organize, test, and share your basketball philosophy.
+      </p>
 
-      {error && <p>Error loading players: {error.message}</p>}
+      <div style={{ display: "grid", gap: "1rem", maxWidth: "700px" }}>
+        <Link href="/players" style={cardStyle}>
+          <h2>Players</h2>
+          <p>Search and explore the player database.</p>
+        </Link>
 
-      {players?.map((player) => (
-        <div
-          key={player.id}
-          style={{
-            border: "1px solid gray",
-            padding: "1rem",
-            marginBottom: "1rem",
-          }}
-        >
-          <h3>{player.name}</h3>
+        <Link href="/rankings" style={cardStyle}>
+          <h2>Rankings</h2>
+          <p>Create GOAT lists, position rankings, and era rankings.</p>
+        </Link>
 
-          <p>Position: {player.position}</p>
-          <p>Era: {player.era}</p>
+        <Link href="/starting-five" style={cardStyle}>
+          <h2>Starting Five</h2>
+          <p>Build your all-time starting lineup.</p>
+        </Link>
 
-          <h4>Career Stats</h4>
-          <p>PPG: {player.career_ppg}</p>
-          <p>RPG: {player.career_rpg}</p>
-          <p>APG: {player.career_apg}</p>
-          <p>SPG: {player.career_spg}</p>
-          <p>BPG: {player.career_bpg}</p>
+        <Link href="/compare" style={cardStyle}>
+          <h2>Compare</h2>
+          <p>Compare players by career, season, era, or custom weights.</p>
+        </Link>
 
-          <h4>Accolades</h4>
-          <p>Championships: {player.championships}</p>
-          <p>MVPs: {player.mvps}</p>
-
-          <h4>Career</h4>
-          <p>Seasons Played: {player.seasons_played}</p>
-          <p>Hall of Fame: {player.hall_of_fame ? "Yes" : "No"}</p>
-        </div>
-      ))}
+        <Link href="/simulator" style={cardStyle}>
+          <h2>Simulator</h2>
+          <p>Run matchups and test teams against your friends.</p>
+        </Link>
+      </div>
     </main>
   );
 }
+
+const cardStyle = {
+  display: "block",
+  border: "1px solid #ddd",
+  borderRadius: "12px",
+  padding: "1rem",
+  textDecoration: "none",
+  color: "inherit",
+};
