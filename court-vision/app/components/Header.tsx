@@ -2,29 +2,12 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header
-      style={{
-        borderBottom: "1px solid #333",
-        padding: "1rem 2rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <Link
-        href="/"
-        style={{
-          fontSize: "1.5rem",
-          fontWeight: "bold",
-          textDecoration: "none",
-          color: "inherit",
-        }}
-      >
+    <header className="site-header">
+      <Link href="/" className="site-logo">
         Court Vision
       </Link>
 
-      <nav style={{ display: "flex", gap: "1rem" }}>
+      <nav className="site-nav">
         <Link href="/players">Players</Link>
         <Link href="/rankings">Rankings</Link>
         <Link href="/starting-five">Starting Five</Link>
