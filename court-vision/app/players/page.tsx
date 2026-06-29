@@ -7,9 +7,10 @@ export default async function PlayersPage({
   searchParams: Promise<{
     search?: string;
     position?: string;
+    era?: string;
   }>;
 }) {
-  const { search, position } = await searchParams;
+  const { search, position, era } = await searchParams;
 
   let query = supabase.from("players").select("*").order("name");
 
@@ -19,6 +20,10 @@ export default async function PlayersPage({
 
   if (position) {
     query = query.eq("position", position);
+  }
+
+  if (era) {
+    query = query.eq("era", era);
   }
 
   const { data: players, error } = await query;
@@ -82,6 +87,25 @@ export default async function PlayersPage({
           <option value="C">Center</option>
         </select>
 
+        <select
+          name="era"
+          defaultValue={era || ""}
+          style={{
+            padding: "0.75rem",
+            borderRadius: "8px",
+            border: "1px solid #444",
+          }}
+        >
+          <option value="">All Eras</option>
+          <option value="1960s">1960s</option>
+          <option value="1970s">1970s</option>
+          <option value="1980s">1980s</option>
+          <option value="1990s">1990s</option>
+          <option value="2000s">2000s</option>
+          <option value="2010s">2010s</option>
+          <option value="2020s">2020s</option>
+        </select>
+
         <button
           type="submit"
           style={{
@@ -94,14 +118,8 @@ export default async function PlayersPage({
           Search
         </button>
 
-        {(search || position) && (
-          <Link
-            href="/players"
-            style={{
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
+        {(search || position || era) && (
+          <Link href="/players" style={{ color: "inherit", textDecoration: "none" }}>
             Clear
           </Link>
         )}
@@ -112,6 +130,7 @@ export default async function PlayersPage({
         {players?.length === 1 ? "" : "s"}
         {search ? ` for "${search}"` : ""}
         {position ? ` (${position})` : ""}
+        {era ? ` in the ${era}` : ""}
       </p>
 
       <div
