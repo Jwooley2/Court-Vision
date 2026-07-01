@@ -109,3 +109,60 @@ Cleaner codebase and faster feature development.
 AD-006 — Normalize Career Statistics
 
 Career statistics are stored in a dedicated player_career_stats table linked to players by a foreign key. This separates player identity from statistical data, improves scalability, and prepares the database for richer analytics and season-level data.
+
+---
+
+# AD-006 — Normalize Career Statistics
+
+**Decision**
+
+Career statistics are stored in a dedicated `player_career_stats` table linked to `players`.
+
+**Reason**
+
+Player identity and player statistics serve different purposes. Player identity should stay stable, while statistical records may expand as Court Vision adds more advanced metrics.
+
+**Impact**
+
+- Cleaner player profiles
+- Easier stat imports
+- Better support for advanced comparisons
+- Less duplicated data over time
+
+---
+
+# AD-007 — Store Accolades as Individual Rows
+
+**Decision**
+
+Player accolades are stored in a dedicated `player_accolades` table, with each award, honor, title, or achievement represented as its own row.
+
+**Reason**
+
+Career comparison debates rely on more than simple totals. Storing accolades individually lets Court Vision support both summary counts and detailed year-by-year award history.
+
+**Impact**
+
+- Accurate résumé summaries
+- Detailed accolade timelines
+- Better GOAT/ranking comparisons
+- Cleaner support for awards like All-NBA, All-Defense, MVP, Finals MVP, Hall of Fame, international honors, and college honors
+
+---
+
+# AD-008 — Support Multiple Team Types
+
+**Decision**
+
+Teams are stored in a flexible `teams` table that supports professional teams, college teams, national teams, historical teams, and inactive franchises.
+
+**Reason**
+
+Player careers can include NBA, ABA, NCAA, Olympic, FIBA, and national team contexts. Court Vision needs one consistent team model that can support all of them.
+
+**Impact**
+
+- Season-by-season player data can reference teams cleanly
+- Michael Jordan can connect to Chicago, Washington, North Carolina, and Team USA
+- Future imports can include NBA, ABA, college, and international data
+- The simulator and player comparison tools can reuse the same team structure
