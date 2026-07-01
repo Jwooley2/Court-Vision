@@ -1,6 +1,38 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
+function formatStat(value: number | string | null | undefined, decimals = 1) {
+  if (value === null || value === undefined) return "—";
+  return Number(value).toFixed(decimals);
+}
+
+type CareerStats = {
+  career_ppg: number | string | null;
+  career_rpg: number | string | null;
+  career_apg: number | string | null;
+};
+
+type PlayerWithCareerStats = {
+  id: number;
+  name: string;
+  position: string | null;
+  era: string | null;
+  championships: number | null;
+  mvps: number | null;
+  hall_of_fame: boolean | null;
+  player_career_stats?: CareerStats[] | CareerStats | null;
+};
+
+function getCareerStats(player: PlayerWithCareerStats) {
+  const stats = player.player_career_stats;
+
+  if (Array.isArray(stats)) {
+    return stats[0];
+  }
+
+  return stats;
+}
+
 export default async function PlayersPage({
   searchParams,
 }: {
@@ -12,7 +44,25 @@ export default async function PlayersPage({
 }) {
   const { search, position, era } = await searchParams;
 
-  let query = supabase.from("players").select("*").order("name");
+  let query = supabase
+    .from("players")
+    .select(
+      `
+        id,
+        name,
+        position,
+        era,
+        championships,
+        mvps,
+        hall_of_fame,
+        player_career_stats (
+          career_ppg,
+          career_rpg,
+          career_apg
+        )
+      `
+    )
+    .order("name");
 
   if (search) {
     query = query.ilike("name", `%${search}%`);
@@ -119,7 +169,10 @@ export default async function PlayersPage({
         </button>
 
         {(search || position || era) && (
-          <Link href="/players" style={{ color: "inherit", textDecoration: "none" }}>
+          <Link
+            href="/players"
+            style={{ color: "inherit", textDecoration: "none" }}
+          >
             Clear
           </Link>
         )}
@@ -140,37 +193,47 @@ export default async function PlayersPage({
           gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
         }}
       >
-        {players?.map((player) => (
-          <Link
-            key={player.id}
-            href={`/players/${player.id}`}
-            style={{
-              border: "1px solid #444",
-              borderRadius: "12px",
-              padding: "1rem",
-              textDecoration: "none",
-              color: "inherit",
-              background: "#111",
-            }}
-          >
-            <h2 style={{ marginBottom: "0.25rem" }}>{player.name}</h2>
+        {players?.map((player) => {
+          const typedPlayer = player as PlayerWithCareerStats;
+          const careerStats = getCareerStats(typedPlayer);
 
-            <p style={{ marginBottom: "1rem", color: "#bbb" }}>
-              {player.position} • {player.era}
-            </p>
+          return (
+            <a
+              key={typedPlayer.id}
+              href={`/players/${typedPlayer.id}`}
+              style={{
+                display: "block",
+                border: "1px solid #444",
+                borderRadius: "12px",
+                padding: "1rem",
+                textDecoration: "none",
+                color: "inherit",
+                background: "#111",
+                cursor: "pointer",
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
+              <h2 style={{ marginBottom: "0.25rem" }}>{typedPlayer.name}</h2>
 
-            <p>
-              {player.career_ppg} PPG / {player.career_rpg} RPG /{" "}
-              {player.career_apg} APG
-            </p>
+              <p style={{ marginBottom: "1rem", color: "#bbb" }}>
+                {typedPlayer.position} • {typedPlayer.era}
+              </p>
 
-            <p>
-              {player.championships} Championships • {player.mvps} MVPs
-            </p>
+              <p>
+                {formatStat(careerStats?.career_ppg)} PPG /{" "}
+                {formatStat(careerStats?.career_rpg)} RPG /{" "}
+                {formatStat(careerStats?.career_apg)} APG
+              </p>
 
-            <p>Hall of Fame: {player.hall_of_fame ? "Yes" : "No"}</p>
-          </Link>
-        ))}
+              <p>
+                {typedPlayer.championships} Championships • {typedPlayer.mvps} MVPs
+              </p>
+
+              <p>Hall of Fame: {typedPlayer.hall_of_fame ? "Yes" : "No"}</p>
+            </a>
+          );
+        })}
       </div>
     </main>
   );
