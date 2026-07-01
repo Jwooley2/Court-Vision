@@ -42,14 +42,6 @@
   }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--text-primary);
-
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 * {
   box-sizing: border-box;
 }
@@ -185,4 +177,13 @@ input::placeholder {
 
 .site-nav a:hover {
   color: var(--accent);
+}
+
+.site-header:focus-visible,
+.site-header *:focus-visible {
+  outline: none;
+}
+
+.site-nav a:focus-visible {
+  outline: none;
 }
