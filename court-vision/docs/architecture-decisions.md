@@ -166,3 +166,65 @@ Player careers can include NBA, ABA, NCAA, Olympic, FIBA, and national team cont
 - Michael Jordan can connect to Chicago, Washington, North Carolina, and Team USA
 - Future imports can include NBA, ABA, college, and international data
 - The simulator and player comparison tools can reuse the same team structure
+
+---
+
+# AD-009 — API-First Bulk Data Imports
+
+**Decision**
+
+Court Vision will use API-based bulk imports as the default data pipeline. Manual CSV exports are allowed only for prototype validation, source correction, or source-specific metrics that are not available through scalable APIs.
+
+**Reason**
+
+Manual exports do not scale across thousands of players and seasons. APIs are better suited for repeatable imports, updates, and cross-checking.
+
+**Impact**
+
+- Faster data expansion
+- Less manual entry
+- Better long-term maintenance
+- Easier source verification
+
+---
+
+# AD-010 — Source-Specific Advanced Metrics
+
+**Decision**
+
+Advanced metrics must preserve their source family.
+
+Examples:
+
+- Basketball Reference-style: PER, Win Shares, BPM, VORP
+- NBA API-style: usage, pace, ratings, assist percentage, rebound percentage
+- Court Vision-calculated: per-36 stats, points per FGA, stocks, assist-to-turnover ratio
+
+**Reason**
+
+Not every advanced metric comes from the same methodology. Court Vision should avoid mixing source families without attribution.
+
+**Impact**
+
+- More trustworthy stats
+- Cleaner comparisons
+- Better citations
+- Less confusion when sources disagree
+
+---
+
+# AD-011 — Stat Availability Disclaimers
+
+**Decision**
+
+Court Vision will track and display when stats are unavailable because they were not tracked, not published, not applicable, or not yet imported.
+
+**Reason**
+
+Basketball data availability varies by era, league, and source. Missing data should not look like a bug or a player weakness.
+
+**Impact**
+
+- Better user trust
+- Better historical context
+- Cleaner player comparisons across eras
