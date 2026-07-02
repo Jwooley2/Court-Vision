@@ -135,7 +135,7 @@ export default async function PlayerProfilePage({
     .order("season_year", { ascending: true, nullsFirst: false })
     .order("accolade_name", { ascending: true });
 
-  const { data: regularSeasons, error: regularSeasonsError } = await supabase
+  const { data: seasons, error: seasonsError } = await supabase
     .from("player_seasons")
     .select(
       `
@@ -148,7 +148,7 @@ export default async function PlayerProfilePage({
     )
     .eq("player_id", id)
     .eq("league", "NBA")
-    .eq("season_type", "regular_season")
+    .in("season_type", ["regular_season", "playoffs"])
     .order("season_year", { ascending: true });
 
   if (playerError || !player) {
@@ -181,19 +181,19 @@ export default async function PlayerProfilePage({
     );
   }
 
-  if (regularSeasonsError) {
+  if (seasonsError) {
     return (
       <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
         <Link href="/players">← Back to Players</Link>
         <h1>{player.name}</h1>
-        <p>Error loading season stats: {regularSeasonsError.message}</p>
+        <p>Error loading season stats: {seasonsError.message}</p>
       </main>
     );
   }
 
   const typedAccolades = (accolades || []) as PlayerAccolade[];
   const groupedAccolades = groupAccolades(typedAccolades);
-  const typedRegularSeasons = (regularSeasons || []) as PlayerSeason[];
+  const typedSeasons = (seasons || []) as PlayerSeason[];
 
   const accoladeHighlights = [
     {
@@ -277,7 +277,7 @@ export default async function PlayerProfilePage({
         <p>VORP: {formatStat(careerStats?.career_vorp, 2)}</p>
       </section>
 
-      <SeasonStatsTable seasons={typedRegularSeasons} />
+      <SeasonStatsTable seasons={typedSeasons} />
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>Accolade Summary</h2>

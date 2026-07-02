@@ -21,6 +21,7 @@ export type PlayerSeason = {
   id: number;
   season_label: string;
   season_year: number;
+  season_type: "regular_season" | "playoffs" | string;
   age: number | null;
   teams?: SeasonTeam | SeasonTeam[] | null;
 
@@ -41,6 +42,8 @@ export type PlayerSeason = {
   points_total: number | null;
   rebounds_total: number | null;
   assists_total: number | null;
+  steals_total: number | null;
+  blocks_total: number | null;
 
   player_efficiency_rating: number | string | null;
   true_shooting_pct: number | string | null;
@@ -66,17 +69,33 @@ export default function SeasonStatsTable({
 }: {
   seasons: PlayerSeason[];
 }) {
+  const [activeSeasonType, setActiveSeasonType] = useState<
+    "regular_season" | "playoffs"
+  >("regular_season");
+
   const [activeSeasonView, setActiveSeasonView] = useState<"basic" | "advanced">(
     "basic"
   );
 
-  const shouldShowSportsReferenceCitation = seasons.some(
+  const visibleSeasons = seasons.filter(
+    (season) => season.season_type === activeSeasonType
+  );
+
+  const seasonTypeLabel =
+    activeSeasonType === "regular_season" ? "Regular Season" : "Playoffs";
+
+  const emptyMessage =
+    activeSeasonType === "regular_season"
+      ? "No regular-season stats found."
+      : "No playoff stats found yet.";
+
+  const shouldShowSportsReferenceCitation = visibleSeasons.some(
     (season) => season.source_citation_required
   );
 
   const sportsReferenceUrl =
-    seasons.find((season) => season.primary_source_url)?.primary_source_url ||
-    "https://www.basketball-reference.com/";
+    visibleSeasons.find((season) => season.primary_source_url)
+      ?.primary_source_url || "https://www.basketball-reference.com/";
 
   return (
     <section style={{ marginBottom: "2rem" }}>
@@ -90,9 +109,41 @@ export default function SeasonStatsTable({
           flexWrap: "wrap",
         }}
       >
-        <h2 style={{ margin: 0 }}>NBA Regular Seasons</h2>
+        <h2 style={{ margin: 0 }}>NBA Seasons</h2>
 
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <button
+            type="button"
+            onClick={() => setActiveSeasonType("regular_season")}
+            style={{
+              padding: "0.5rem 0.75rem",
+              borderRadius: "8px",
+              border: "1px solid #444",
+              color: "inherit",
+              background:
+                activeSeasonType === "regular_season" ? "#333" : "transparent",
+              cursor: "pointer",
+            }}
+          >
+            Regular Season
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSeasonType("playoffs")}
+            style={{
+              padding: "0.5rem 0.75rem",
+              borderRadius: "8px",
+              border: "1px solid #444",
+              color: "inherit",
+              background:
+                activeSeasonType === "playoffs" ? "#333" : "transparent",
+              cursor: "pointer",
+            }}
+          >
+            Playoffs
+          </button>
+
           <button
             type="button"
             onClick={() => setActiveSeasonView("basic")}
@@ -101,7 +152,8 @@ export default function SeasonStatsTable({
               borderRadius: "8px",
               border: "1px solid #444",
               color: "inherit",
-              background: activeSeasonView === "basic" ? "#333" : "transparent",
+              background:
+                activeSeasonView === "basic" ? "#333" : "transparent",
               cursor: "pointer",
             }}
           >
@@ -126,15 +178,20 @@ export default function SeasonStatsTable({
         </div>
       </div>
 
-      {seasons.length === 0 ? (
-        <p>No regular-season stats found.</p>
+      <p style={{ color: "#bbb", marginTop: 0 }}>
+        {seasonTypeLabel} •{" "}
+        {activeSeasonView === "basic" ? "Basic Stats" : "Advanced Stats"}
+      </p>
+
+      {visibleSeasons.length === 0 ? (
+        <p>{emptyMessage}</p>
       ) : (
         <div style={{ overflowX: "auto" }}>
           <table
             style={{
               width: "100%",
               borderCollapse: "collapse",
-              minWidth: activeSeasonView === "advanced" ? "900px" : "1000px",
+              minWidth: activeSeasonView === "advanced" ? "900px" : "1100px",
             }}
           >
             <thead>
@@ -170,6 +227,8 @@ export default function SeasonStatsTable({
                       "PTS",
                       "REB",
                       "AST",
+                      "STL",
+                      "BLK",
                     ]
                 ).map((header) => (
                   <th
@@ -188,7 +247,7 @@ export default function SeasonStatsTable({
             </thead>
 
             <tbody>
-              {seasons.map((season) => (
+              {visibleSeasons.map((season) => (
                 <tr key={season.id}>
                   <td style={{ padding: "0.5rem", whiteSpace: "nowrap" }}>
                     {season.season_label}
@@ -270,6 +329,12 @@ export default function SeasonStatsTable({
                       </td>
                       <td style={{ padding: "0.5rem" }}>
                         {season.assists_total ?? "—"}
+                      </td>
+                      <td style={{ padding: "0.5rem" }}>
+                        {season.steals_total ?? "—"}
+                      </td>
+                      <td style={{ padding: "0.5rem" }}>
+                        {season.blocks_total ?? "—"}
                       </td>
                     </>
                   )}
