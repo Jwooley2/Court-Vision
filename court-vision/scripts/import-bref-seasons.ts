@@ -7,7 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 dotenv.config({ path: ".env.local" });
 
 type BrefSeasonRow = Record<string, string>;
-type StatMode = "per_game" | "totals";
+type StatMode = "per_game" | "totals" | "advanced";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -153,6 +153,22 @@ async function deleteExistingSeasonRow({
   }
 }
 
+function baseSourceFields(playerSourceUrl: string, verificationNotes: string) {
+  return {
+    primary_source: "Sports Reference / Basketball Reference",
+    primary_source_url: playerSourceUrl,
+    source_citation_required: true,
+    source_citation_text:
+      "Data sourced from Sports Reference / Basketball Reference. Please cite and link to Basketball-Reference.com when displaying these statistics.",
+    advanced_source_family: "basketball_reference",
+    advanced_source_notes:
+      "Imported from Basketball Reference CSV export into Court Vision.",
+    verification_status: "single_source",
+    verified_at: new Date().toISOString(),
+    verification_notes: verificationNotes,
+  };
+}
+
 async function importPerGameRow({
   row,
   playerId,
@@ -203,26 +219,10 @@ async function importPerGameRow({
     three_point_pct: toNumber(getFirstValue(row, ["3P%"])),
     free_throw_pct: toNumber(getFirstValue(row, ["FT%"])),
 
-    player_efficiency_rating: toNumber(getFirstValue(row, ["PER"])),
-    true_shooting_pct: toNumber(getFirstValue(row, ["TS%"])),
-    usage_pct: toNumber(getFirstValue(row, ["USG%"])),
-    win_shares: toNumber(getFirstValue(row, ["WS"])),
-    win_shares_per_48: toNumber(getFirstValue(row, ["WS/48"])),
-    box_plus_minus: toNumber(getFirstValue(row, ["BPM"])),
-    value_over_replacement_player: toNumber(getFirstValue(row, ["VORP"])),
-
-    primary_source: "Sports Reference / Basketball Reference",
-    primary_source_url: playerSourceUrl,
-    source_citation_required: true,
-    source_citation_text:
-      "Data sourced from Sports Reference / Basketball Reference. Please cite and link to Basketball-Reference.com when displaying these statistics.",
-    advanced_source_family: "basketball_reference",
-    advanced_source_notes:
-      "Imported from Basketball Reference CSV export into Court Vision.",
-    verification_status: "single_source",
-    verified_at: new Date().toISOString(),
-    verification_notes:
-      "Imported per-game season data by Court Vision Basketball Reference CSV importer.",
+    ...baseSourceFields(
+      playerSourceUrl,
+      "Imported per-game season data by Court Vision Basketball Reference CSV importer."
+    ),
   };
 
   const { error } = await supabase.from("player_seasons").insert(payload);
@@ -236,14 +236,16 @@ async function importPerGameRow({
   console.log(`Imported ${seasonLabel} ${seasonType} per-game`);
 }
 
-async function importTotalsRow({
+async function updateMatchingSeasonRow({
   row,
   playerId,
   seasonType,
+  values,
 }: {
   row: BrefSeasonRow;
   playerId: number;
   seasonType: string;
+  values: Record<string, unknown>;
 }) {
   const seasonLabel = row.Season;
   const seasonYear = normalizeSeasonYear(seasonLabel);
@@ -253,17 +255,7 @@ async function importTotalsRow({
 
   let query = supabase
     .from("player_seasons")
-    .update({
-      minutes_total: toInteger(getFirstValue(row, ["MP", "Minutes"])),
-      points_total: toInteger(getFirstValue(row, ["PTS", "Points"])),
-      rebounds_total: toInteger(getFirstValue(row, ["TRB", "Rebounds"])),
-      assists_total: toInteger(getFirstValue(row, ["AST", "Assists"])),
-      steals_total: toInteger(getFirstValue(row, ["STL", "Steals"])),
-      blocks_total: toInteger(getFirstValue(row, ["BLK", "Blocks"])),
-      verified_at: new Date().toISOString(),
-      verification_notes:
-        "Updated season totals by Court Vision Basketball Reference CSV importer.",
-    })
+    .update(values)
     .eq("player_id", playerId)
     .eq("league", "NBA")
     .eq("season_year", seasonYear)
@@ -280,11 +272,71 @@ async function importTotalsRow({
 
   if (error) {
     throw new Error(
-      `Error updating totals for ${seasonLabel} ${seasonType}: ${error.message}`
+      `Error updating ${seasonLabel} ${seasonType}: ${error.message}`
     );
   }
+}
 
-  console.log(`Updated ${seasonLabel} ${seasonType} totals`);
+async function importTotalsRow({
+  row,
+  playerId,
+  seasonType,
+}: {
+  row: BrefSeasonRow;
+  playerId: number;
+  seasonType: string;
+}) {
+  await updateMatchingSeasonRow({
+    row,
+    playerId,
+    seasonType,
+    values: {
+      minutes_total: toInteger(getFirstValue(row, ["MP", "Minutes"])),
+      points_total: toInteger(getFirstValue(row, ["PTS", "Points"])),
+      rebounds_total: toInteger(getFirstValue(row, ["TRB", "Rebounds"])),
+      assists_total: toInteger(getFirstValue(row, ["AST", "Assists"])),
+      steals_total: toInteger(getFirstValue(row, ["STL", "Steals"])),
+      blocks_total: toInteger(getFirstValue(row, ["BLK", "Blocks"])),
+      verified_at: new Date().toISOString(),
+      verification_notes:
+        "Updated season totals by Court Vision Basketball Reference CSV importer.",
+    },
+  });
+
+  console.log(`Updated ${row.Season} ${seasonType} totals`);
+}
+
+async function importAdvancedRow({
+  row,
+  playerId,
+  seasonType,
+  playerSourceUrl,
+}: {
+  row: BrefSeasonRow;
+  playerId: number;
+  seasonType: string;
+  playerSourceUrl: string;
+}) {
+  await updateMatchingSeasonRow({
+    row,
+    playerId,
+    seasonType,
+    values: {
+      player_efficiency_rating: toNumber(getFirstValue(row, ["PER"])),
+      true_shooting_pct: toNumber(getFirstValue(row, ["TS%"])),
+      usage_pct: toNumber(getFirstValue(row, ["USG%"])),
+      win_shares: toNumber(getFirstValue(row, ["WS"])),
+      win_shares_per_48: toNumber(getFirstValue(row, ["WS/48"])),
+      box_plus_minus: toNumber(getFirstValue(row, ["BPM"])),
+      value_over_replacement_player: toNumber(getFirstValue(row, ["VORP"])),
+      ...baseSourceFields(
+        playerSourceUrl,
+        "Updated advanced season metrics by Court Vision Basketball Reference CSV importer."
+      ),
+    },
+  });
+
+  console.log(`Updated ${row.Season} ${seasonType} advanced`);
 }
 
 async function main() {
@@ -301,8 +353,8 @@ async function main() {
     throw new Error("--seasonType must be regular_season or playoffs");
   }
 
-  if (!["per_game", "totals"].includes(statMode)) {
-    throw new Error("--statMode must be per_game or totals");
+  if (!["per_game", "totals", "advanced"].includes(statMode)) {
+    throw new Error("--statMode must be per_game, totals, or advanced");
   }
 
   if (Number.isNaN(playerId)) {
@@ -339,6 +391,15 @@ async function main() {
         row,
         playerId,
         seasonType,
+      });
+    }
+
+    if (statMode === "advanced") {
+      await importAdvancedRow({
+        row,
+        playerId,
+        seasonType,
+        playerSourceUrl,
       });
     }
   }
