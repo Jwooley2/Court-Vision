@@ -47,6 +47,16 @@ type PlayerSeason = {
   steals_per_game: number | string | null;
   blocks_per_game: number | string | null;
 
+  field_goal_pct: number | string | null;
+  three_point_pct: number | string | null;
+  free_throw_pct: number | string | null;
+
+  points_total: number | null;
+  rebounds_total: number | null;
+  assists_total: number | null;
+  steals_total: number | null;
+  blocks_total: number | null;
+
   player_efficiency_rating: number | string | null;
   true_shooting_pct: number | string | null;
   usage_pct: number | string | null;
@@ -153,10 +163,16 @@ function getSeasonTeamName(season: PlayerSeason) {
 
 export default async function PlayerProfilePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ seasonView?: string }>;
 }) {
   const { id } = await params;
+  const { seasonView } = await searchParams;
+
+  const activeSeasonView =
+    seasonView === "advanced" ? "advanced" : "basic";
 
   const { data: player, error: playerError } = await supabase
     .from("players")
@@ -328,130 +344,210 @@ export default async function PlayerProfilePage({
       </section>
 
       <section style={{ marginBottom: "2rem" }}>
-        <h2>NBA Regular Seasons</h2>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "1rem",
+      marginBottom: "1rem",
+      flexWrap: "wrap",
+    }}
+  >
+    <h2 style={{ margin: 0 }}>NBA Regular Seasons</h2>
 
-        {typedRegularSeasons.length === 0 ? (
-          <p>No regular-season stats found.</p>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                minWidth: "1100px",
-              }}
-            >
-              <thead>
-                <tr>
-                  {[
-                    "Season",
-                    "Age",
-                    "Team",
-                    "GP",
-                    "GS",
-                    "MPG",
-                    "PPG",
-                    "RPG",
-                    "APG",
-                    "SPG",
-                    "BPG",
-                    "PER",
-                    "TS%",
-                    "USG%",
-                    "WS",
-                    "WS/48",
-                    "BPM",
-                    "VORP",
-                  ].map((header) => (
-                    <th
-                      key={header}
-                      style={{
-                        borderBottom: "1px solid #444",
-                        padding: "0.5rem",
-                        textAlign: "left",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
+    <div style={{ display: "flex", gap: "0.5rem" }}>
+      <Link
+        href={`/players/${id}?seasonView=basic`}
+        style={{
+          padding: "0.5rem 0.75rem",
+          borderRadius: "8px",
+          border: "1px solid #444",
+          textDecoration: "none",
+          color: "inherit",
+          background: activeSeasonView === "basic" ? "#333" : "transparent",
+        }}
+      >
+        Basic
+      </Link>
 
-              <tbody>
-                {typedRegularSeasons.map((season) => (
-                  <tr key={season.id}>
-                    <td style={{ padding: "0.5rem", whiteSpace: "nowrap" }}>
-                      {season.season_label}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {season.age ?? "—"}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {getSeasonTeamName(season)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {season.games_played ?? "—"}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {season.games_started ?? "—"}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.minutes_per_game)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.points_per_game)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.rebounds_per_game)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.assists_per_game)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.steals_per_game)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.blocks_per_game)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.player_efficiency_rating, 1)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatPercent(season.true_shooting_pct)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.usage_pct, 1)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.win_shares, 1)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.win_shares_per_48, 3)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.box_plus_minus, 1)}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {formatStat(season.value_over_replacement_player, 1)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      <Link
+        href={`/players/${id}?seasonView=advanced`}
+        style={{
+          padding: "0.5rem 0.75rem",
+          borderRadius: "8px",
+          border: "1px solid #444",
+          textDecoration: "none",
+          color: "inherit",
+          background: activeSeasonView === "advanced" ? "#333" : "transparent",
+        }}
+      >
+        Advanced
+      </Link>
+    </div>
+  </div>
 
-        {shouldShowSportsReferenceCitation && (
-          <p style={{ marginTop: "0.75rem", color: "#bbb", fontSize: "0.9rem" }}>
-            Advanced season data sourced from{" "}
-            <a href={sportsReferenceUrl} target="_blank" rel="noreferrer">
-              Sports Reference / Basketball Reference
-            </a>
-            .
-          </p>
-        )}
-      </section>
+  {typedRegularSeasons.length === 0 ? (
+    <p>No regular-season stats found.</p>
+  ) : (
+    <div style={{ overflowX: "auto" }}>
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          minWidth: activeSeasonView === "advanced" ? "900px" : "1000px",
+        }}
+      >
+        <thead>
+          <tr>
+            {(activeSeasonView === "advanced"
+              ? [
+                  "Season",
+                  "Age",
+                  "Team",
+                  "PER",
+                  "TS%",
+                  "USG%",
+                  "WS",
+                  "WS/48",
+                  "BPM",
+                  "VORP",
+                ]
+              : [
+                  "Season",
+                  "Age",
+                  "Team",
+                  "GP",
+                  "GS",
+                  "MPG",
+                  "PPG",
+                  "RPG",
+                  "APG",
+                  "SPG",
+                  "BPG",
+                  "FG%",
+                  "3PT%",
+                  "FT%",
+                  "PTS",
+                  "REB",
+                  "AST",
+                ]
+            ).map((header) => (
+              <th
+                key={header}
+                style={{
+                  borderBottom: "1px solid #444",
+                  padding: "0.5rem",
+                  textAlign: "left",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody>
+          {typedRegularSeasons.map((season) => (
+            <tr key={season.id}>
+              <td style={{ padding: "0.5rem", whiteSpace: "nowrap" }}>
+                {season.season_label}
+              </td>
+
+              <td style={{ padding: "0.5rem" }}>{season.age ?? "—"}</td>
+
+              <td style={{ padding: "0.5rem" }}>
+                {getSeasonTeamName(season)}
+              </td>
+
+              {activeSeasonView === "advanced" ? (
+                <>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.player_efficiency_rating, 1)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatPercent(season.true_shooting_pct)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.usage_pct, 1)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.win_shares, 1)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.win_shares_per_48, 3)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.box_plus_minus, 1)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.value_over_replacement_player, 1)}
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td style={{ padding: "0.5rem" }}>
+                    {season.games_played ?? "—"}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {season.games_started ?? "—"}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.minutes_per_game)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.points_per_game)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.rebounds_per_game)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.assists_per_game)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.steals_per_game)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatStat(season.blocks_per_game)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatPercent(season.field_goal_pct)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatPercent(season.three_point_pct)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {formatPercent(season.free_throw_pct)}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {season.points_total ?? "—"}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {season.rebounds_total ?? "—"}
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {season.assists_total ?? "—"}
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  {shouldShowSportsReferenceCitation && (
+    <p style={{ marginTop: "0.75rem", color: "#bbb", fontSize: "0.9rem" }}>
+      Advanced season data sourced from{" "}
+      <a href={sportsReferenceUrl} target="_blank" rel="noreferrer">
+        Sports Reference / Basketball Reference
+      </a>
+      .
+    </p>
+  )}
+</section>
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>Accolade Summary</h2>
