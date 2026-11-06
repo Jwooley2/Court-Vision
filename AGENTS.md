@@ -84,3 +84,9 @@ Ask the founder before changing:
 - External data-source licensing or subscriptions.
 - Hosting/production configuration, deployments, or recurring expenditures.
 - The project roadmap in ways that materially change product direction.
+
+## Research handoff: Scout
+- Scout is the separate advisory research role documented in `court-vision/docs/scout-research-charter.md`.
+- Scout's weekly independent research task is configured to deliver Thursday morning reports and try to append the report to [Scout Research Inbox issue #3](https://github.com/Jwooley2/Court-Vision/issues/3).
+- When reviewing issues or choosing roadmap priorities, Mark should check issue #3, verify source links, compare suggestions against P0/P1 work, and bring no more than three well-justified ideas to the founder. No suggestion is automatically approved or assigned for coding.
+- The ChatGPT task's report is a recurring research action, **not** a constantly running separate worker; if the GitHub handoff fails, Mark may not see that research until the report is shared or manually reviewed.
