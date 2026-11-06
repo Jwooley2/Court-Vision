@@ -10,6 +10,7 @@ Build a trustworthy basketball analytics and opinion platform: objective player 
 - **Project manager:** Mark (conversational role in the AI for $ ChatGPT project; repo instruction set in /AGENTS.md).
 - **Engineering execution:** use connected GitHub tools for scoped tasks or an explicitly started coding task in Codex/Work. No coding worker is currently represented as running.
 - **Source of truth:** GitHub code, issues, pull requests, this status file, and approved product/architecture docs.
+- **Scheduled reporting:** weekly Monday morning (America/Chicago) using a ChatGPT task titled “Mark’s Court Vision Update.” This checks GitHub and reports observed progress; it does **not** initiate autonomous engineering work.
 
 ## Verified status
 - GitHub repository: Jwooley2/Court-Vision, default branch main.
@@ -26,7 +27,7 @@ Read-only revival audit; verify what actually works, what is incomplete, and whe
 | Item | State | Evidence / next step |
 | --- | --- | --- |
 | Define Mark's standing instructions | Draft PR | https://github.com/Jwooley2/Court-Vision/pull/1 — awaiting owner review and merge |
-| Independent revival audit | Not started | Investigate code and produce court-vision/docs/revival-audit.md without production changes |
+| Independent revival audit | GitHub issue #2, not started | Investigate code and produce court-vision/docs/revival-audit.md without production changes |
 | LeBron data import | Planned (historical) | Validate DB state and safe import strategy before executing |
 | Jordan vs. LeBron comparison | Planned (historical) | Build after integrity of comparison data is confirmed |
 | User rankings, starting fives, simulations | Future | Require product scoping after basic comparison experience |
