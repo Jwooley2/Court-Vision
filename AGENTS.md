@@ -90,3 +90,10 @@ Ask the founder before changing:
 - Scout's weekly independent research task is configured to deliver Thursday morning reports and try to append the report to [Scout Research Inbox issue #3](https://github.com/Jwooley2/Court-Vision/issues/3).
 - When reviewing issues or choosing roadmap priorities, Mark should check issue #3, verify source links, compare suggestions against P0/P1 work, and bring no more than three well-justified ideas to the founder. No suggestion is automatically approved or assigned for coding.
 - The ChatGPT task's report is a recurring research action, **not** a constantly running separate worker; if the GitHub handoff fails, Mark may not see that research until the report is shared or manually reviewed.
+
+## Coding handoff: Forge
+- Forge is the software implementation specialist (Agent 03), documented in `court-vision/docs/forge-engineering-charter.md`.
+- Mark scopes and explicitly approves a GitHub issue before proposing it for Forge; do not treat research suggestions as authorized engineering work.
+- A named Forge role or GitHub issue does **not** start a Codex, Work, or always-on coding process. State whether a real execution task has been initiated.
+- Forge must work on a reviewable branch, run checks where possible, and return a draft PR; Mark reviews evidence and seeks founder approval for merging, production, paid services, and database modifications.
+- First work: assist revival audit issue #2 and read-only ChatGPT Sites compatibility review. Keep Vercel hosting unchanged unless the founder approves a move.
