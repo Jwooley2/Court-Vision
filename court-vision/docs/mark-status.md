@@ -8,7 +8,7 @@ Build a trustworthy basketball analytics and opinion platform: objective player 
 ## Ownership and workflow
 - **Product director:** human founder. Determines basketball philosophy, feature priorities, spending, and production releases.
 - **Project manager:** Mark (conversational role in the AI for $ ChatGPT project; repo instruction set in /AGENTS.md).
-- **Engineering execution:** use connected GitHub tools for scoped tasks or an explicitly started coding task in Codex/Work. No coding worker is currently represented as running.
+- **Engineering execution:** Forge is the configured coding-specialist role; an explicitly started ChatGPT Work/Codex task or connected development workflow is still required for independent execution. No continuous coding worker is currently running.
 - **Source of truth:** GitHub code, issues, pull requests, this status file, and approved product/architecture docs.
 - **Scheduled reporting:** Mark reports weekly Monday mornings (America/Chicago). Scout independently researches and reports weekly Thursday mornings; its GitHub handoff is issue #3 when tools permit. Neither recurrence initiates autonomous coding.
 
@@ -18,7 +18,8 @@ Build a trustworthy basketball analytics and opinion platform: objective player 
 - Historical product plan: court-vision/docs/product-plan.md; architecture decisions: court-vision/docs/architecture-decisions.md.
 - The July plan describes player profiles and normalized stats with Jordan data, and identifies unfinished LeBron data and comparison work. **These database claims have not yet been reverified against the live Supabase database.**
 - The importer script currently deletes matching season rows and reinserts them for per-game imports. This must not be run on production without explicit approval, backup, and verification.
-- Build, lint, tests, deployment state, live Supabase contents, and external data licensing are **not yet audited**.
+- Vercel `court-vision` is connected to this GitHub repository, uses Next.js, and shows a READY production deployment at the Scout setup merge commit on 2026-11-06. Its project reports SSO protection enabled and `live=false`; public accessibility has **not** been verified. Some recent branch preview deployments are in ERROR state, which needs diagnosis.
+- Build, lint, tests, public accessibility, live Supabase contents, and external data licensing are **not yet audited**.
 
 ## Current focus (P0)
 Read-only revival audit; verify what actually works, what is incomplete, and whether to preserve/refactor/rebuild.
@@ -31,9 +32,11 @@ Read-only revival audit; verify what actually works, what is incomplete, and whe
 | LeBron data import | Planned (historical) | Validate DB state and safe import strategy before executing |
 | Jordan vs. LeBron comparison | Planned (historical) | Build after integrity of comparison data is confirmed |
 | User rankings, starting fives, simulations | Future | Require product scoping after basic comparison experience |
+| Forge coding-specialist setup | Draft PR | New coding role and read-only audit handoff; not a running autonomous worker |
+| ChatGPT Sites feasibility | Read-only assessment pending | Evaluate Next.js, Supabase, auth, preview/release and long-run costs vs Vercel, without migration |
 
 ## Research / opportunity feed
-- Scout charter: `court-vision/docs/scout-research-charter.md` (pending setup PR until merged).
+- Scout charter: `court-vision/docs/scout-research-charter.md` (merged in PR #4 on November 6, 2026).
 - Research inbox: https://github.com/Jwooley2/Court-Vision/issues/3.
 - Research task: “Scout’s Court Vision Brief,” weekly Thursday morning, first scheduled for November 12, 2026. Future runs and GitHub commenting depend on connector availability.
 - Mark reviews credible Scout suggestions when prioritizing engineering work, without automatic acceptance.
