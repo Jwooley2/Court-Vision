@@ -4,9 +4,12 @@ import { readPlayerProfile, readPlayers } from "./player-data";
 import { PlayerDataError, withPlayerRead } from "./supabase";
 import { renderToStaticMarkup } from "react-dom/server";
 import PlayerProfilePage from "../app/players/[id]/page";
+import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
 
 const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const originalVercelEnv = process.env.VERCEL_ENV;
+const originalFixtureMode = process.env.COURT_VISION_PREVIEW_FIXTURES;
 const calls: URL[] = [];
 const response = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
@@ -25,6 +28,7 @@ beforeEach(() => {
   calls.length = 0;
   process.env.NEXT_PUBLIC_SUPABASE_URL = "https://fixture.invalid";
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "fixture-only-key";
+  delete process.env.COURT_VISION_PREVIEW_FIXTURES;
   // Every test replaces fetch; an unexpected network attempt fails closed.
   fixture(() => { throw new Error("Unexpected fixture request"); });
 });
@@ -35,6 +39,45 @@ afterEach(() => {
   else process.env.NEXT_PUBLIC_SUPABASE_URL = originalUrl;
   if (originalKey === undefined) delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   else process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = originalKey;
+  if (originalVercelEnv === undefined) delete process.env.VERCEL_ENV;
+  else process.env.VERCEL_ENV = originalVercelEnv;
+  if (originalFixtureMode === undefined) delete process.env.COURT_VISION_PREVIEW_FIXTURES;
+  else process.env.COURT_VISION_PREVIEW_FIXTURES = originalFixtureMode;
+});
+
+test("preview fixtures load through the SDK without real configuration or network", async () => {
+  process.env.VERCEL_ENV = "preview";
+  process.env.COURT_VISION_PREVIEW_FIXTURES = "true";
+  delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+  delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  assert.equal((await readPlayers({})).length, 2);
+  assert.equal((await readPlayerProfile("9001"))?.careerStats.games_played, 10);
+  assert.equal((await readPlayerProfile("9002"))?.careerStats, null);
+  assert.equal(await readPlayerProfile("9999"), null);
+  assert.equal(calls.length, 0);
+});
+
+test("preview fixture filters handle search, position, era and no matches", async () => {
+  process.env.VERCEL_ENV = "preview";
+  process.env.COURT_VISION_PREVIEW_FIXTURES = "true";
+  assert.equal((await readPlayers({ search: "guard", position: "PG", era: "2020s" }))[0].id, 9001);
+  assert.equal((await readPlayers({ search: "Forward" }))[0].id, 9002);
+  assert.deepEqual(await readPlayers({ search: "No match" }), []);
+  assert.deepEqual(await readPlayers({ search: "*?" }), []);
+});
+
+test("fixture flag cannot replace production data or enable writes", async () => {
+  process.env.COURT_VISION_PREVIEW_FIXTURES = "true";
+  process.env.VERCEL_ENV = "production";
+  assert.equal(isPreviewFixtureMode(), false);
+  await assert.rejects(previewFixtureFetch("https://court-vision-fixtures.invalid/rest/v1/players"));
+  fixture(() => response([]));
+  await readPlayers({});
+  assert.equal(calls.length, 1); // Still uses the configured normal data path.
+  process.env.VERCEL_ENV = "preview";
+  assert.equal((await previewFixtureFetch("https://court-vision-fixtures.invalid/rest/v1/players", { method: "POST" })).status, 405);
+  assert.equal((await previewFixtureFetch("https://unexpected.invalid/rest/v1/players")).status, 405);
+  assert.equal((await previewFixtureFetch("https://court-vision-fixtures.invalid/rest/v1/private")).status, 404);
 });
 
 test("invalid IDs make no requests, even when configuration is missing", async () => {

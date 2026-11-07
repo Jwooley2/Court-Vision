@@ -4,6 +4,8 @@ _Last reviewed: 2026-11-06. This is a planning and coordination record, not a cl
 
 ## Latest verified milestone — November 6, 2026
 
+Preview follow-up: founder authorized fixing the test data setup. No separate Supabase project/branch exists. A preview-only synthetic adapter and visible sample-data notice are prepared for PR #12; 13 tests, lint and production build pass. One server-side fixture flag will be restricted to the PR branch's Preview scope. No production credentials will be copied. Deployed verification is pending publication; PR #12 carries the latest QA results. See `docs/preview-data.md`.
+
 This section supersedes older audit/startup status statements below.
 
 - Supabase project `hflvhyzewmdvlfqzonbk` now reports `ACTIVE_HEALTHY` after the approved resume.

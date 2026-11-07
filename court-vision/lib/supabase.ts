@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
 
 export const PLAYER_READ_BUDGET_MS = 8_000;
 
@@ -11,8 +12,9 @@ export class PlayerDataError extends Error {
 }
 
 function createReadClient(signal: AbortSignal) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const fixtures = isPreviewFixtureMode();
+  const url = fixtures ? "https://court-vision-fixtures.invalid" : process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = fixtures ? "synthetic-fixture-placeholder" : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   try {
     if (!url || !key || !["http:", "https:"].includes(new URL(url).protocol)) {
       throw new PlayerDataError("configuration");
@@ -20,7 +22,7 @@ function createReadClient(signal: AbortSignal) {
     return createClient(url, key, {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
       global: {
-        fetch: (input, init) => fetch(input, {
+        fetch: (input, init) => (fixtures ? previewFixtureFetch : fetch)(input, {
           ...init,
           cache: "no-store",
           signal: init?.signal ? AbortSignal.any([signal, init.signal]) : signal,
