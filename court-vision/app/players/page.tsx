@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { readPlayers } from "@/lib/player-data";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -44,48 +44,7 @@ export default async function PlayersPage({
 }) {
   const { search, position, era } = await searchParams;
 
-  let query = supabase
-    .from("players")
-    .select(
-      `
-        id,
-        name,
-        position,
-        era,
-        championships,
-        mvps,
-        hall_of_fame,
-        player_career_stats (
-          career_ppg,
-          career_rpg,
-          career_apg
-        )
-      `
-    )
-    .order("name");
-
-  if (search) {
-    query = query.ilike("name", `%${search}%`);
-  }
-
-  if (position) {
-    query = query.eq("position", position);
-  }
-
-  if (era) {
-    query = query.eq("era", era);
-  }
-
-  const { data: players, error } = await query;
-
-  if (error) {
-    return (
-      <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-        <h1>Players</h1>
-        <p>Error loading players: {error.message}</p>
-      </main>
-    );
-  }
+  const players = await readPlayers({ search, position, era });
 
   return (
     <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>

@@ -2,6 +2,19 @@
 
 _Last reviewed: 2026-11-06. This is a planning and coordination record, not a claim that any agent is running continuously._
 
+## Latest verified milestone — November 6, 2026
+
+This section supersedes older audit/startup status statements below.
+
+- Supabase project `hflvhyzewmdvlfqzonbk` now reports `ACTIVE_HEALTHY` after the approved resume.
+- Public production directory renders Jordan and LeBron. Jordan's profile renders career stats, seasons and accolades. LeBron's profile renders identity but lacks detailed data. No rebuild or application deployment was needed to recover these reads.
+- Active engineering goal: Issue #8 player-read resilience. Founder approved proceeding in conversation after service recovery.
+- Local branch `forge/player-data-resilience` contains a proposed patch: request-scoped 8-second read deadline, safe configuration/error categories, validated profile IDs, early identity guard, parallel detail reads, error and not-found boundaries, and explicit incomplete-data messaging.
+- Verification: 10 credential-free fixture/render tests; ESLint; production build including TypeScript; local production HTTP renders using a disposable fixture service (valid/incomplete 200, invalid/absent 404, outage 500, no raw backend diagnostic). No production keys or database writes were used.
+- Browser automation could not launch due to environment socket restrictions. Retry button interaction and visual review remain unverified. Next streaming may commit HTTP 200 before a later error; observed local statuses do not guarantee all streaming responses have 404/500.
+- Founder approved publishing the tested branch and opening a draft PR after being told branch publication may trigger a Vercel preview. Publication is the current handoff; no merge or production deployment is authorized. Preview configuration remains separate work in #11.
+- LeBron data import remains pending source verification, a concrete backup/rollback plan, and approval for the specific data changes. This patch does not supply or overwrite statistics.
+
 ## Mission
 Build a trustworthy basketball analytics and opinion platform: objective player information, comparisons, user GOAT rankings, starting fives, and eventually user-driven simulations. Prioritize functionality and verified data.
 

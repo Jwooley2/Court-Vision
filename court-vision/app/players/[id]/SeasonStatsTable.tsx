@@ -86,8 +86,8 @@ export default function SeasonStatsTable({
 
   const emptyMessage =
     activeSeasonType === "regular_season"
-      ? "No regular-season stats found."
-      : "No playoff stats found yet.";
+      ? "Regular-season data is not available for this profile yet."
+      : "Playoff data is not available for this profile yet.";
 
   const shouldShowSportsReferenceCitation = visibleSeasons.some(
     (season) => season.source_citation_required

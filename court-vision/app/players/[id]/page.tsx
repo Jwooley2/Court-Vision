@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { notFound } from "next/navigation";
+import { readPlayerProfile } from "@/lib/player-data";
 import SeasonStatsTable, { PlayerSeason } from "./SeasonStatsTable";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
@@ -116,80 +117,9 @@ export default async function PlayerProfilePage({
 }) {
   const { id } = await params;
 
-  const { data: player, error: playerError } = await supabase
-    .from("players")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  const { data: careerStats, error: careerStatsError } = await supabase
-    .from("player_career_stats")
-    .select("*")
-    .eq("player_id", id)
-    .maybeSingle();
-
-  const { data: accolades, error: accoladesError } = await supabase
-    .from("player_accolades")
-    .select("*")
-    .eq("player_id", id)
-    .order("season_year", { ascending: true, nullsFirst: false })
-    .order("accolade_name", { ascending: true });
-
-  const { data: seasons, error: seasonsError } = await supabase
-    .from("player_seasons")
-    .select(
-      `
-        *,
-        teams (
-          name,
-          abbreviation
-        )
-      `
-    )
-    .eq("player_id", id)
-    .eq("league", "NBA")
-    .in("season_type", ["regular_season", "playoffs"])
-    .order("season_year", { ascending: true });
-
-  if (playerError || !player) {
-    return (
-      <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-        <Link href="/players">← Back to Players</Link>
-        <h1>Player Not Found</h1>
-        <p>We could not find this player.</p>
-      </main>
-    );
-  }
-
-  if (careerStatsError) {
-    return (
-      <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-        <Link href="/players">← Back to Players</Link>
-        <h1>{player.name}</h1>
-        <p>Error loading career stats: {careerStatsError.message}</p>
-      </main>
-    );
-  }
-
-  if (accoladesError) {
-    return (
-      <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-        <Link href="/players">← Back to Players</Link>
-        <h1>{player.name}</h1>
-        <p>Error loading accolades: {accoladesError.message}</p>
-      </main>
-    );
-  }
-
-  if (seasonsError) {
-    return (
-      <main style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-        <Link href="/players">← Back to Players</Link>
-        <h1>{player.name}</h1>
-        <p>Error loading season stats: {seasonsError.message}</p>
-      </main>
-    );
-  }
+  const profile = await readPlayerProfile(id);
+  if (!profile) notFound();
+  const { player, careerStats, accolades, seasons } = profile;
 
   const typedAccolades = (accolades || []) as PlayerAccolade[];
   const groupedAccolades = groupAccolades(typedAccolades);
@@ -246,6 +176,12 @@ export default async function PlayerProfilePage({
         {player.position} • {player.era}
       </p>
 
+      {(!careerStats || typedAccolades.length === 0 || typedSeasons.length === 0) && (
+        <p role="status">
+          This profile is incomplete. Unavailable data is shown as —; it does not mean zero.
+        </p>
+      )}
+
       <section style={{ marginBottom: "2rem" }}>
         <h2>Career Stats</h2>
 
@@ -281,6 +217,7 @@ export default async function PlayerProfilePage({
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>Accolade Summary</h2>
+        <p>Counts reflect recorded accolades and may be incomplete.</p>
 
         <div
           style={{
@@ -301,7 +238,7 @@ export default async function PlayerProfilePage({
             >
               <p style={{ margin: 0, color: "#bbb" }}>{highlight.label}</p>
               <p style={{ margin: 0, fontSize: "1.75rem", fontWeight: "bold" }}>
-                {highlight.value}
+                {typedAccolades.length > 0 ? highlight.value : "—"}
               </p>
             </div>
           ))}
@@ -312,7 +249,7 @@ export default async function PlayerProfilePage({
         <h2>Career Accolades</h2>
 
         {groupedAccolades.length === 0 ? (
-          <p>No accolades found.</p>
+          <p>Accolade data is not available for this profile yet.</p>
         ) : (
           groupedAccolades.map(
             ([groupName, groupItems]: [string, PlayerAccolade[]]) => (
