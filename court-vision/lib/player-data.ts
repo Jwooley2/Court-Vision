@@ -7,7 +7,7 @@ export type PlayerFilters = { search?: string; position?: string; era?: string }
 export function readPlayers({ search, position, era }: PlayerFilters) {
   return withPlayerRead(async (client) => {
     let query = client.from("players").select(`
-      id, name, position, era, championships, mvps, hall_of_fame,
+      id, name, external_id, position, era, championships, mvps, hall_of_fame,
       player_career_stats (career_ppg, career_rpg, career_apg, career_spg, career_bpg, career_fg_pct)
     `).order("name").retry(false);
     if (search) query = query.ilike("name", `%${search}%`);
