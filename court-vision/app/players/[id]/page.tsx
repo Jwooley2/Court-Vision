@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { readPlayerProfile } from "@/lib/player-data";
-import SeasonStatsTable, { PlayerSeason } from "./SeasonStatsTable";
+import { readPlayerProfile, readPlayers } from "@/lib/player-data";
+import CareerStatsPanel, { ComparePlayer } from "./CareerStatsPanel";
+import { summarizeAccolades } from "@/lib/accolade-summary";
+import { groupLegacyHonors } from "@/lib/legacy-honors";
+import { readPlayoffShooting } from "@/lib/playoff-shooting-sources";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -119,11 +122,21 @@ export default async function PlayerProfilePage({
 
   const profile = await readPlayerProfile(id);
   if (!profile) notFound();
-  const { player, careerStats, accolades, seasons } = profile;
+  const { player, careerStats, accolades, playoffs } = profile;
+  const playoffShooting = readPlayoffShooting(player.external_id, playoffs.games);
+  const playoffSummary = playoffShooting && playoffs.summary
+    ? { ...playoffs, summary: { ...playoffs.summary, career_fg_pct: playoffShooting.percentage } }
+    : playoffs;
+  // Comparison directory is optional: an outage must not hide the player profile.
+  const comparisonPlayers = await readPlayers({}).catch(() => []);
 
   const typedAccolades = (accolades || []) as PlayerAccolade[];
-  const groupedAccolades = groupAccolades(typedAccolades);
-  const typedSeasons = (seasons || []) as PlayerSeason[];
+  const legacyHonors = groupLegacyHonors(typedAccolades);
+  const groupedAccolades = groupAccolades(typedAccolades.filter(accolade =>
+    accolade.league === "NBA" &&
+    !["hall_of_fame", "anniversary_team", "other", "skill_contest"].includes(accolade.accolade_type)
+  ));
+  const honorSummary = summarizeAccolades(typedAccolades);
 
   const accoladeHighlights = [
     {
@@ -176,14 +189,14 @@ export default async function PlayerProfilePage({
         {player.position} • {player.era}
       </p>
 
-      {(!careerStats || typedAccolades.length === 0 || typedSeasons.length === 0) && (
+      {(!careerStats || typedAccolades.length === 0) && (
         <p role="status">
           This profile is incomplete. Unavailable data is shown as —; it does not mean zero.
         </p>
       )}
 
       <section style={{ marginBottom: "2rem" }}>
-        <h2>Career Stats</h2>
+        <h2>Career Overview</h2>
 
         <p>Games Played: {careerStats?.games_played ?? "—"}</p>
         <p>Seasons Played: {careerStats?.seasons_played ?? "—"}</p>
@@ -213,7 +226,40 @@ export default async function PlayerProfilePage({
         <p>VORP: {formatStat(careerStats?.career_vorp, 2)}</p>
       </section>
 
-      <SeasonStatsTable seasons={typedSeasons} />
+      <CareerStatsPanel playerId={Number(id)} playerName={player.name}
+        regular={careerStats} playoffs={playoffSummary} playoffShooting={playoffShooting}
+        players={comparisonPlayers as ComparePlayer[]} />
+
+      <section style={{ marginBottom: "2rem" }} aria-labelledby="individual-honors-heading">
+        <h2 id="individual-honors-heading">Individual Accolades</h2>
+        {!honorSummary.hasRecords ? (
+          <p role="status">Individual award totals are not available for this profile yet.</p>
+        ) : (
+          <>
+            <p>
+              Recorded NBA individual accolades: <strong>{honorSummary.nbaCount}</strong>
+              {" • "}Olympic medals: <strong>{honorSummary.olympicMedals}</strong>
+              {" • "}Combined selected honors: <strong>{honorSummary.combinedCount}</strong>
+            </p>
+            <p style={{ color: "#bbb" }}>
+              {honorSummary.provisional
+                ? "Provisional counts; independent source verification is incomplete."
+                : "Counts are verified for these categories; other honors are listed below."}
+              {" "}NBA championships are excluded from individual accolade totals.
+            </p>
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              columnGap: "2rem", rowGap: "0.5rem",
+            }}>
+              {honorSummary.categories.map(category => (
+                <div key={category.name} style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span>{category.label}</span><strong>{category.count}</strong>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>Accolade Summary</h2>
@@ -245,34 +291,62 @@ export default async function PlayerProfilePage({
         </div>
       </section>
 
-      <section>
-        <h2>Career Accolades</h2>
-
-        {groupedAccolades.length === 0 ? (
-          <p>Accolade data is not available for this profile yet.</p>
-        ) : (
-          groupedAccolades.map(
-            ([groupName, groupItems]: [string, PlayerAccolade[]]) => (
-              <div key={groupName} style={{ marginBottom: "1.5rem" }}>
-                <h3>
-                  {groupName} ({groupItems.length})
-                </h3>
-
-                <ul>
-                  {groupItems.map((accolade) => (
-                    <li key={accolade.id}>
-                      <strong>{accolade.accolade_name}</strong>
-                      {formatAccoladeDetails(accolade)
-                        ? ` — ${formatAccoladeDetails(accolade)}`
-                        : ""}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )
-          )
-        )}
+      <section style={{ marginBottom: "2rem" }}>
+        <details>
+          <summary style={{ cursor: "pointer", fontSize: "1.35rem", fontWeight: 700 }}>
+            NBA Awards — Year-by-Year Details
+          </summary>
+          {groupedAccolades.length === 0 ? (
+            <p>NBA award details are not available for this profile yet.</p>
+          ) : groupedAccolades.map(([groupName, groupItems]) => (
+            <div key={groupName} style={{ marginBottom: "1rem" }}>
+              <h3>{groupName} ({groupItems.length})</h3>
+              <ul>
+                {groupItems.map(accolade => (
+                  <li key={accolade.id}>
+                    <strong>{accolade.accolade_name}</strong>
+                    {formatAccoladeDetails(accolade) ? ` — ${formatAccoladeDetails(accolade)}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </details>
       </section>
+
+      <section aria-label="College and other basketball honors" style={{ marginBottom: "2rem" }}>
+        <details>
+          <summary style={{ cursor: "pointer", fontSize: "1.35rem", fontWeight: 700 }}>
+            College &amp; Other Basketball Honors
+          </summary>
+          <p style={{ color: "#bbb" }}>
+            College, international, Hall of Fame and other notable basketball achievements
+            contribute to a player&apos;s overall legacy, but they are kept separate from NBA
+            career statistics and the NBA individual accolade total. Olympic medals are
+            already included in the distinct Olympic subtotal above.
+          </p>
+          {legacyHonors.length === 0 ? (
+            <p>No additional basketball honors have been recorded for this player yet.</p>
+          ) : legacyHonors.map(group => (
+            <div key={group.title} style={{ marginBottom: "1.5rem" }}>
+              <h3>{group.title}</h3>
+              <ul>
+                {group.records.map(accolade => (
+                  <li key={accolade.id}>
+                    <strong>{accolade.accolade_name}</strong>
+                    {formatAccoladeDetails(accolade) ? ` — ${formatAccoladeDetails(accolade)}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          <p style={{ color: "#bbb" }}>
+            Listed honors reflect available records and may require further verification.
+            No legacy-honors score or weighting is implied.
+          </p>
+        </details>
+      </section>
+
     </main>
   );
 }

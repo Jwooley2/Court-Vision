@@ -1,0 +1,46 @@
+name: Verify Court Vision profile changes
+
+on:
+  pull_request:
+    paths:
+      - 'court-vision/**'
+      - '.github/workflows/verify-profile-pr.yml'
+  push:
+    branches:
+      - 'forge/jordan-summary-read-path'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: court-vision
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Configure Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: court-vision/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run unit tests
+        run: npm test
+      - name: Run ESLint
+        run: npm run lint
+      - name: TypeScript check
+        run: npx tsc --noEmit
+      - name: Production build (no production secrets)
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+      - name: Synthetic HTTP route smoke (no database access)
+        run: node scripts/smoke-preview.mjs

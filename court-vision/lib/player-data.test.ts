@@ -4,7 +4,13 @@ import { readPlayerProfile, readPlayers } from "./player-data";
 import { PlayerDataError, withPlayerRead } from "./supabase";
 import { renderToStaticMarkup } from "react-dom/server";
 import PlayerProfilePage from "../app/players/[id]/page";
+import CareerStatsPanel from "../app/players/[id]/CareerStatsPanel";
+import { createElement } from "react";
 import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
+import { summarizeAccolades, AccoladeRecord } from "./accolade-summary";
+import { groupLegacyHonors } from "./legacy-honors";
+import { summarizePlayoffSeasons } from "./playoff-summary";
+import { readPlayoffShooting } from "./playoff-shooting-sources";
 
 const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -102,7 +108,7 @@ test("identity failure is sanitized and does not query details or retry", async 
   assert.equal(calls.length, 1);
 });
 
-test("valid profile reads independent detail tables concurrently", async () => {
+test("valid profile reads career accolades and narrow playoff totals concurrently", async () => {
   let detailStarts = 0;
   let release!: () => void;
   const allStarted = new Promise<void>(resolve => { release = resolve; });
@@ -117,8 +123,13 @@ test("valid profile reads independent detail tables concurrently", async () => {
   const profile = await readPlayerProfile("1");
   assert.equal(profile?.careerStats.games_played, 10);
   assert.equal(profile?.accolades.length, 1);
-  assert.equal(profile?.seasons.length, 1);
   assert.equal(detailStarts, 3);
+  const seasonQuery = calls.find(url => url.pathname.endsWith("/player_seasons"));
+  assert.ok(seasonQuery);
+  assert.equal(seasonQuery.searchParams.get("season_type"), "eq.playoffs");
+  assert.equal(seasonQuery.searchParams.get("league"), "eq.NBA");
+  assert.ok(seasonQuery.searchParams.get("select")?.includes("points_total"));
+  assert.ok(!seasonQuery.searchParams.get("select")?.includes("*"));
 });
 
 test("missing optional data stays missing rather than becoming zero", async () => {
@@ -126,14 +137,14 @@ test("missing optional data stays missing rather than becoming zero", async () =
   const profile = await readPlayerProfile("7");
   assert.equal(profile?.careerStats, null);
   assert.deepEqual(profile?.accolades, []);
-  assert.deepEqual(profile?.seasons, []);
+  assert.equal(profile?.playoffs.summary, null);
 });
 
 test("incomplete profile renders unknown accolades, never fabricated zero totals", async () => {
   fixture(url => response(url.pathname.endsWith("/players") ? [{ id: 7, name: "Fixture Player" }] : []));
   const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "7" }) }));
   assert.ok(html.includes("This profile is incomplete"));
-  assert.ok(html.includes("Accolade data is not available"));
+  assert.ok(html.includes("Individual award totals are not available"));
   assert.equal((html.match(/font-weight:bold">—<\/p>/g) ?? []).length, 8);
   assert.equal((html.match(/font-weight:bold">0<\/p>/g) ?? []).length, 0);
 });
@@ -184,4 +195,175 @@ test("one deadline covers serial stages and cancels concurrent reads", async () 
   }, 50), { message: "Player data unavailable (timeout)" });
   assert.equal(aborted, 2);
   assert.ok(performance.now() - start < 500);
+});
+
+
+test("career panel shows six basic metrics and view controls without inventing missing values", () => {
+  const html = renderToStaticMarkup(createElement(CareerStatsPanel, {
+    playerId: 1,
+    playerName: "Fixture Player",
+    regular: { career_ppg: 30.1, career_rpg: null, career_fg_pct: 0.497 },
+    playoffs: { summary: null, games: 0, seasons: 0, provisional: true },
+    playoffShooting: null,
+    players: [{ id: 1, name: "Fixture Player" }, { id: 2, name: "Opponent", player_career_stats: null }],
+  }));
+  for (const label of ["Regular Season", "Playoffs", "Compare", "PPG", "RPG", "APG", "SPG", "BPG", "FG%"]) {
+    assert.ok(html.includes(label), `missing ${label}`);
+  }
+  assert.ok(html.includes("30.1"));
+  assert.ok(html.includes("49.7%"));
+  assert.ok(html.includes("—")); // unknown RPG/other metrics are not zeros
+  assert.ok(!html.includes("Verified playoff career summaries")); // not mislabeled as regular stats
+});
+
+
+test("selected NBA accolades total 61 and Olympic gold medals are separate", () => {
+  const categories: Array<[string, number, string | null]> = [
+    ["NBA MVP", 5, null], ["NBA Finals MVP", 6, null],
+    ["NBA Defensive Player of the Year", 1, null],
+    ["NBA Rookie of the Year", 1, null],
+    ["All-NBA", 11, "First Team"],
+    ["NBA All-Defensive Team", 9, "First Team"],
+    ["NBA All-Star", 14, null], ["NBA All-Rookie Team", 1, "First Team"],
+    ["NBA Scoring Champion", 10, null], ["NBA Steals Leader", 3, null],
+  ];
+  const rows: AccoladeRecord[] = categories.flatMap(([name, count, result]) =>
+    Array.from({ length: count }, (_, i) => ({
+      league: "NBA", accolade_name: name, season_year: 1980 + i,
+      result, verification_status: "needs_fallback_cross_check",
+    }))
+  );
+  rows.push(
+    { league: "NBA", accolade_name: "NBA Champion", season_year: 1991 },
+    { league: "NBA", accolade_name: "NBA All-Star Game MVP", season_year: 1988 },
+    { league: "Olympics", accolade_name: "Olympic Gold Medal", season_year: 1984 },
+    { league: "Olympics", accolade_name: "Olympic Gold Medal", season_year: 1992 },
+  );
+  // Duplicate importer record should never increase a career total.
+  rows.push({ ...rows[0] });
+  const result = summarizeAccolades(rows);
+  assert.equal(result.nbaCount, 61);
+  assert.equal(result.olympicMedals, 2);
+  assert.equal(result.combinedCount, 63);
+  assert.equal(result.provisional, true);
+});
+
+test("no award records means no verified zero-accolade claim", () => {
+  assert.equal(summarizeAccolades([]).hasRecords, false);
+});
+
+
+test("legacy honors group NCAA, Olympic and other basketball awards apart from NBA totals", () => {
+  const rows = [
+    { id: 1, league: "NCAA", accolade_type: "college", accolade_name: "NCAA Champion", season_year: 1982 },
+    { id: 2, league: "ACC", accolade_type: "college", accolade_name: "ACC Player of the Year", season_year: 1984 },
+    { id: 3, league: "Olympics", accolade_type: "international", accolade_name: "Olympic Gold Medal", season_year: 1984 },
+    { id: 4, league: "Naismith", accolade_type: "hall_of_fame", accolade_name: "Naismith Memorial Basketball Hall of Fame", season_year: 2009 },
+    { id: 5, league: "NBA", accolade_type: "mvp", accolade_name: "NBA MVP", season_year: 1988 },
+    { id: 6, league: "NBA", accolade_type: "championship", accolade_name: "NBA Champion", season_year: 1991 },
+  ];
+  const groups = groupLegacyHonors(rows);
+  assert.deepEqual(groups.map(group => [group.title, group.records.length]), [
+    ["College & NCAA", 2], ["Olympic & International", 1], ["Other Basketball Honors", 1],
+  ]);
+  assert.equal(summarizeAccolades(rows).nbaCount, 1);
+  assert.equal(summarizeAccolades(rows).olympicMedals, 1);
+  const deduped = groupLegacyHonors([...rows, { ...rows[0], id: 999 }]);
+  assert.equal(deduped[0].records.length, 2);
+});
+
+test("profile provides collapsed legacy honors section with collegiate achievements", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Fixture Legend", position: "SG", era: "1980s" }]);
+    if (url.pathname.endsWith("/player_career_stats")) return response([{ games_played: 10 }]);
+    if (url.pathname.endsWith("/player_accolades")) return response([
+      { id: 1, league: "NCAA", accolade_type: "college", accolade_name: "NCAA Champion", season_year: 1982 },
+      { id: 2, league: "NBA", accolade_type: "mvp", accolade_name: "NBA MVP", season_year: 1988 },
+    ]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "1" }) }));
+  assert.ok(html.includes("College &amp; Other Basketball Honors"));
+  assert.ok(html.includes("<details>"));
+  assert.ok(html.includes("NCAA Champion"));
+  assert.ok(html.includes("NBA MVP"));
+  assert.ok(html.includes("Recorded NBA individual accolades"));
+});
+
+test("Jordan playoff season totals produce historical per-game rates without inventing FG%", () => {
+  const summary = summarizePlayoffSeasons([{
+    season_year: 1991, stint_type: "team", games_played: 179,
+    points_total: 5987, rebounds_total: 1152, assists_total: 1022,
+    steals_total: 376, blocks_total: 158, verification_status: "single_source",
+  }]);
+  assert.equal(summary.games, 179);
+  assert.equal(Number(Number(summary.summary?.career_ppg).toFixed(1)), 33.4);
+  assert.equal(Number(Number(summary.summary?.career_rpg).toFixed(1)), 6.4);
+  assert.equal(Number(Number(summary.summary?.career_apg).toFixed(1)), 5.7);
+  assert.equal(Number(Number(summary.summary?.career_spg).toFixed(1)), 2.1);
+  assert.equal(Number(Number(summary.summary?.career_bpg).toFixed(1)), 0.9);
+  assert.equal(summary.summary?.career_fg_pct, null);
+  assert.equal(summary.provisional, true);
+});
+
+test("playoff totals never double-count combined and team stint records", () => {
+  const summary = summarizePlayoffSeasons([
+    { season_year: 2000, stint_type: "team", games_played: 2,
+      points_total: 10, rebounds_total: 4, assists_total: 3,
+      steals_total: 1, blocks_total: 0 },
+    { season_year: 2000, stint_type: "total", games_played: 3,
+      points_total: 30, rebounds_total: 9, assists_total: 6,
+      steals_total: 3, blocks_total: 1 },
+    { season_year: 2001, stint_type: "team", games_played: 2,
+      points_total: 20, rebounds_total: 10, assists_total: 8,
+      steals_total: 2, blocks_total: null },
+  ]);
+  assert.equal(summary.games, 5);
+  assert.equal(summary.summary?.career_ppg, 10);
+  assert.equal(summary.summary?.career_rpg, 3.8);
+  assert.equal(summary.summary?.career_bpg, null);
+  assert.equal(summary.seasons, 2);
+});
+
+test("Jordan's sourced playoff shooting is accurate and guarded by the games count", () => {
+  const shooting = readPlayoffShooting("michael_jordan", 179);
+  assert.ok(shooting);
+  assert.equal(shooting.fgm, 2188);
+  assert.equal(shooting.fga, 4497);
+  assert.equal(Number((shooting.percentage * 100).toFixed(1)), 48.7);
+  assert.ok(shooting.primaryUrl.includes("nba.com"));
+  assert.equal(readPlayoffShooting("michael_jordan", 178), null);
+  assert.equal(readPlayoffShooting("lebron_james", 179), null);
+});
+
+test("profile embeds Jordan's independently sourced playoff percentage only when totals match", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Michael Jordan", external_id: "michael_jordan" }]);
+    if (url.pathname.endsWith("/player_career_stats")) return response([{ career_ppg: 30.1 }]);
+    if (url.pathname.endsWith("/player_accolades")) return response([]);
+    if (url.pathname.endsWith("/player_seasons")) return response([{
+      season_year: 1991, stint_type: "team", games_played: 179,
+      points_total: 5987, rebounds_total: 1152, assists_total: 1022,
+      steals_total: 376, blocks_total: 158, verification_status: "single_source",
+    }]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "1" }) }));
+  assert.ok(html.includes("Career Averages"));
+  assert.ok(html.includes("Regular Season"));
+});
+
+test("assists titles count consistently without changing Jordan's 61 NBA individual honors", () => {
+  const lebron = summarizeAccolades([
+    { league: "NBA", accolade_name: "NBA Assists Leader", season_year: 2020, verification_status: "cross_checked" },
+    { league: "NBA", accolade_name: "NBA Scoring Champion", season_year: 2008, verification_status: "cross_checked" },
+  ]);
+  assert.equal(lebron.nbaCount, 2);
+  assert.equal(lebron.categories.find(c => c.label === "Assists Titles")?.count, 1);
+  const jordan = summarizeAccolades([
+    { league: "NBA", accolade_name: "NBA Scoring Champion", season_year: 1987 },
+    { league: "NBA", accolade_name: "NBA Steals Leader", season_year: 1988 },
+  ]);
+  assert.equal(jordan.categories.find(c => c.label === "Assists Titles")?.count, 0);
+  assert.equal(jordan.nbaCount, 2);
 });
