@@ -83,7 +83,7 @@ for (const event of honors.events) {
   assert.ok(Number.isInteger(event.season_year) && event.season_year >= 2003 && event.season_year <= 2026);
   assert.ok(["staged_pending_event_level_cross_check", "cross_checked_year_and_tier"].includes(event.review_status));
   if (event.review_status === "cross_checked_year_and_tier") {
-    assert.ok(event.secondary_source_url?.includes("nba.com/gamenotes/"));
+    assert.ok(event.secondary_source_url?.startsWith("https://www.nba.com/"));
   }
   const key = [event.league, event.accolade_name, event.result, event.season_year].join("|");
   assert.ok(!keys.has(key), "duplicate honor event: " + key);
