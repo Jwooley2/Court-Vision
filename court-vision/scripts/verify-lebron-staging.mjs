@@ -81,9 +81,14 @@ assert.equal(medals.filter(x => x.accolade_name === "Olympic Bronze Medal").leng
 const keys = new Set();
 for (const event of honors.events) {
   assert.ok(Number.isInteger(event.season_year) && event.season_year >= 2003 && event.season_year <= 2026);
-  assert.equal(event.review_status, "staged_pending_event_level_cross_check");
+  assert.ok(["staged_pending_event_level_cross_check", "cross_checked_year_and_tier"].includes(event.review_status));
+  if (event.review_status === "cross_checked_year_and_tier") {
+    assert.ok(event.secondary_source_url?.includes("nba.com/gamenotes/"));
+  }
   const key = [event.league, event.accolade_name, event.result, event.season_year].join("|");
   assert.ok(!keys.has(key), "duplicate honor event: " + key);
   keys.add(key);
 }
-console.log("PASS dated honors: 61 NBA events (13/4/4 All-NBA, 5/1 All-Defense), 4 Olympic medals, no duplicates");
+assert.equal(honors.events.filter(row => row.review_status === "cross_checked_year_and_tier").length, 39);
+assert.equal(honors.events.filter(row => row.review_status === "staged_pending_event_level_cross_check").length, 26);
+console.log("PASS dated honors: 61 NBA events, 4 Olympic medals, 39 event-level cross-checks, 26 pending, no duplicates");
