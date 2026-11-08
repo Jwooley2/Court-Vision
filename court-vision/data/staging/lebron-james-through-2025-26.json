@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "status": "staged_review_only",
+  "allow_production_import": false,
+  "player": {
+    "name": "LeBron James",
+    "external_id": "lebron_james",
+    "nba_player_id": 2544,
+    "database_player_id": 7,
+    "position": "F",
+    "seasons_played": 23,
+    "career_cutoff": "2025-26",
+    "career_cutoff_note": "NBA regular season and 2026 playoffs complete; excludes 2026-27 NBA games",
+    "representative_teams": [
+      "CLE",
+      "MIA",
+      "LAL"
+    ]
+  },
+  "regular_season": {
+    "games_played": 1622,
+    "points": 43440,
+    "rebounds": 12095,
+    "assists": 12016,
+    "steals": 2417,
+    "blocks": 1185,
+    "fgm": 15961,
+    "fga": 31502,
+    "three_pm": 2636,
+    "three_pa": 7565,
+    "ftm": 8882,
+    "fta": 12051,
+    "minutes": 61029,
+    "verification_status": "cross_checked",
+    "sources": [
+      "https://www.nba.com/stats/alltime-leaders?ActiveFlag=Yes&PerMode=Totals&SeasonType=Regular+Season",
+      "https://www.nba.com/news/19-playoff-stats-lebron-james-2026-playoffs",
+      "https://www.basketball-reference.com/players/j/jamesle01.html"
+    ]
+  },
+  "playoffs": {
+    "games_played": 302,
+    "points": 8521,
+    "rebounds": 2695,
+    "assists": 2168,
+    "steals": 506,
+    "blocks": 287,
+    "fgm": 3055,
+    "fga": 6167,
+    "three_pm": 497,
+    "three_pa": 1495,
+    "ftm": 1914,
+    "fta": 2582,
+    "minutes": 12446,
+    "verification_status": "cross_checked",
+    "sources": [
+      "https://www.nba.com/stats/alltime-leaders?ActiveFlag=Yes&PerMode=Totals",
+      "https://www.nba.com/sixers/news/philadelphia-76ers-sign-4x-nba-champion-and-22x-all-star-lebron-james",
+      "https://www.basketball-reference.com/players/j/jamesle01.html"
+    ]
+  },
+  "honors": {
+    "nba_individual_categories": {
+      "mvp": 4,
+      "finals_mvp": 4,
+      "defensive_player_of_year": 0,
+      "rookie_of_year": 1,
+      "all_nba": 21,
+      "all_defensive": 6,
+      "all_star": 22,
+      "all_rookie": 1,
+      "scoring_titles": 1,
+      "steals_titles": 0,
+      "assists_titles": 1
+    },
+    "excluded_from_individual": {
+      "championships": 4,
+      "all_star_game_mvp": 3,
+      "nba_cup_mvp": 1,
+      "nba_cup_all_tournament": 1,
+      "player_of_month": 40,
+      "player_of_week": 68
+    },
+    "international": {
+      "olympic_gold_medals": [
+        2008,
+        2012,
+        2024
+      ],
+      "olympic_bronze_medals": [
+        2004
+      ]
+    },
+    "other_notable": [
+      "NBA 75th Anniversary Team",
+      "2003 National High School Player of the Year"
+    ],
+    "verification_status": "category_counts_only_years_incomplete",
+    "sources": [
+      "https://www.nba.com/player/2544",
+      "https://www.nba.com/news/players-with-most-all-nba-selections-ever",
+      "https://www.nba.com/news/lebron-james-close-to-being-the-only-member-of-the-30k-10k-10k-club",
+      "https://www.usab.com/players/lebron-james"
+    ],
+    "notes": "NBA honors count is a category-level snapshot, not an import-ready list of individually dated award events."
+  },
+  "notes": [
+    "Do not create per-season award rows from category counts: accolade years and All-NBA team tiers must be individually checked before import.",
+    "Assist titles are distinct from steals titles; add assists title to all player counting policies before displaying a side-by-side totals comparison.",
+    "No NCAA basketball participation; high school honors belong in Other Basketball Honors, not College & NCAA.",
+    "All averages derived from integer career totals divided by games; shooting percentages use career makes/attempts.",
+    "No wins, ratings, synthetic comparability score, or subjective GOAT weights are supplied."
+  ],
+  "prepared_on": "2026-11-08"
+}
