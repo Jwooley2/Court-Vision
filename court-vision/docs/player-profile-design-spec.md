@@ -11,7 +11,7 @@
 
 ### 2. Individual accolades
 - Two-column list on desktop, single column on mobile. Each entry shows **count × clear award type**, with optional team placement detail.
-- Categories: MVP, Finals MVP, DPOY, Rookie of the Year, All-NBA, All-Defensive, All-Star, All-Rookie, scoring titles, and statistical category titles (such as steals leader).
+- Categories: MVP, Finals MVP, DPOY, Rookie of the Year, All-NBA, All-Defensive, All-Star, All-Rookie, scoring titles, statistical category titles (such as steals leader), and **Olympic medals** shown distinctly as international career accomplishments.
 - Display zero only if that category is verified to be completely tracked; otherwise show unavailable/partial indicator. No source ambiguity or double counting.
 - Distinguish league/season and official selection versus award. All-NBA first-team selection is a subset of All-NBA selections, not an additional accolade; same for All-Defense.
 
@@ -20,7 +20,7 @@
 - Michael Jordan mockup example: MVP 5 + Finals MVP 6 + DPOY 1 + ROY 1 + All-NBA 11 + All-Defensive 9 + All-Star 14 + All-Rookie First Team 1 + scoring titles 10 + steals titles 3 = **61**.
 - **The 61 is the defined mockup sum, not a promise that the selection universe captures all honors.** Future new categories must have consistent inclusion rules across all profiles. Count each award event once; first-team breakdowns are explanatory subsets, and titles must not overlap with duplicated statistical-title records.
 - Only present a definitive total for complete verified categories. If not verified, label it `Recorded accolades`, `At least N`, or `Incomplete` instead of misleading precision.
-- Exclude team championships, Hall of Fame inductions, NBA anniversary teams, Olympic/college honors, and skill-contest victories from the standard **NBA individual accolade score** unless founder later approves a different category policy. They may be shown elsewhere without silently changing the total. If statistical leadership scope changes (points/steals/assists/rebounds/blocks etc.), apply it consistently and revalidate historical years.
+- Exclude team championships, Hall of Fame inductions, NBA anniversary teams, college honors, and skill-contest victories from the standardized **NBA individual accolade count**. **Founder expressly approved Olympic accomplishments as part of player profiles and broader career honors.** Show Olympic medals in their own distinct international category, with medal color, country, competition and year. Maintain an NBA-only subtotal (Jordan mockup: 61) and a separately labeled **combined NBA + Olympic honors total** if category completeness has been verified, so international and NBA achievements are visible without confusing the scopes. Do not silently add Olympic medals to the pre-existing NBA-only 61. If statistical leadership scope changes (points/steals/assists/rebounds/blocks etc.), apply it consistently and revalidate historical years.
 
 ### 4. One shared statistics display
 - Tab/segmented control: **Regular Season | Playoffs | Compare**.
