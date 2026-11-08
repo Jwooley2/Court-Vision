@@ -423,3 +423,29 @@ test("playoff career totals reject missing and impossible shooting totals", () =
   assert.equal(result.sourceCutoff, "2025-26");
   assert.equal(summarizeStoredPlayoffCareer({...base, field_goals_attempted: 2000}).summary?.career_fg_pct, null);
 });
+
+test("player profile omits reference-style advanced stats while keeping career and efficiency sections", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{
+      id: 7, name: "LeBron James", position: "SF", era: "Modern",
+    }]);
+    if (url.pathname.endsWith("/player_career_stats")) return response([{
+      games_played: 1622, seasons_played: 23,
+      career_ppg: 26.8, career_fg_pct: 0.507,
+      career_per: 27.2, career_ws: 265.2, career_bpm: 8.7, career_vorp: 151.4,
+    }]);
+    if (url.pathname.endsWith("/player_accolades")) return response([]);
+    if (url.pathname.endsWith("/player_seasons")) return response([]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "7" }) }));
+  assert.ok(html.includes("Career Overview"));
+  assert.ok(html.includes("Efficiency"));
+  assert.ok(html.includes("Career Averages"));
+  assert.ok(html.includes("Individual Accolades"));
+  assert.ok(!html.includes("Advanced Stats"));
+  assert.ok(!html.includes("Win Shares"));
+  assert.ok(!html.includes("VORP:"));
+  assert.ok(!html.includes("PER:"));
+  assert.ok(!html.includes("BPM:"));
+});
