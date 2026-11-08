@@ -102,14 +102,14 @@ test("identity failure is sanitized and does not query details or retry", async 
   assert.equal(calls.length, 1);
 });
 
-test("valid profile reads independent detail tables concurrently", async () => {
+test("valid profile reads career and accolades concurrently without a season-history query", async () => {
   let detailStarts = 0;
   let release!: () => void;
   const allStarted = new Promise<void>(resolve => { release = resolve; });
   fixture(async url => {
     if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Fixture Player" }]);
     detailStarts++;
-    if (detailStarts === 3) release();
+    if (detailStarts === 2) release();
     await allStarted;
     if (url.pathname.endsWith("/player_career_stats")) return response([{ games_played: 10 }]);
     return response([{ id: 1 }]);
@@ -117,8 +117,8 @@ test("valid profile reads independent detail tables concurrently", async () => {
   const profile = await readPlayerProfile("1");
   assert.equal(profile?.careerStats.games_played, 10);
   assert.equal(profile?.accolades.length, 1);
-  assert.equal(profile?.seasons.length, 1);
-  assert.equal(detailStarts, 3);
+  assert.equal(detailStarts, 2);
+  assert.ok(calls.every(url => !url.pathname.endsWith("/player_seasons")));
 });
 
 test("missing optional data stays missing rather than becoming zero", async () => {
@@ -126,7 +126,6 @@ test("missing optional data stays missing rather than becoming zero", async () =
   const profile = await readPlayerProfile("7");
   assert.equal(profile?.careerStats, null);
   assert.deepEqual(profile?.accolades, []);
-  assert.deepEqual(profile?.seasons, []);
 });
 
 test("incomplete profile renders unknown accolades, never fabricated zero totals", async () => {
