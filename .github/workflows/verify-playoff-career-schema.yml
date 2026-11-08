@@ -1,0 +1,52 @@
+name: Verify Proposed Playoff Summary Storage
+
+on:
+  push:
+    branches:
+      - forge/playoff-career-summary-storage
+  pull_request:
+    paths:
+      - 'court-vision/**'
+      - '.github/workflows/verify-playoff-career-schema.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Node setup
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: court-vision/package-lock.json
+      - name: Run test, lint, type check and build
+        run: |
+          cd court-vision
+          npm ci
+          npm test
+          npm run lint
+          npx tsc --noEmit
+          npm run build
+      - name: Rehearse new table and actual existing unique award index
+        shell: bash
+        run: |
+          set -euo pipefail
+          trap 'docker rm -f cv-schema-rehearsal >/dev/null 2>&1 || true' EXIT
+          docker run -d --name cv-schema-rehearsal -e POSTGRES_PASSWORD=test-only postgres:16 >/dev/null
+          for n in $(seq 1 45); do
+            if docker exec cv-schema-rehearsal pg_isready -U postgres >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          docker exec cv-schema-rehearsal createdb -U postgres cv_test
+          docker exec -i cv-schema-rehearsal psql -X -U postgres -d cv_test -v ON_ERROR_STOP=1 < court-vision/tests/proposed-playoff-schema-prep.sql
+          docker exec -i cv-schema-rehearsal psql -X -U postgres -d cv_test -v ON_ERROR_STOP=1 < court-vision/docs/proposed-player-playoff-career-schema.sql
+          docker exec -i cv-schema-rehearsal psql -X -U postgres -d cv_test -v ON_ERROR_STOP=1 < court-vision/tests/proposed-playoff-schema-verify.sql
+          echo "PASS: playoff career schema, unique career key and pre-existing award index"
