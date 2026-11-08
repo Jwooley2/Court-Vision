@@ -34,7 +34,8 @@
     "verification_status": "cross_checked",
     "sources": [
       "https://www.nba.com/stats/alltime-leaders?ActiveFlag=Yes&PerMode=Totals&SeasonType=Regular+Season",
-      "https://www.nba.com/news/19-playoff-stats-lebron-james-2026-playoffs"
+      "https://www.nba.com/news/19-playoff-stats-lebron-james-2026-playoffs",
+      "https://www.basketball-reference.com/players/j/jamesle01.html"
     ]
   },
   "playoffs": {
@@ -54,7 +55,8 @@
     "verification_status": "cross_checked",
     "sources": [
       "https://www.nba.com/stats/alltime-leaders?ActiveFlag=Yes&PerMode=Totals",
-      "https://www.nba.com/sixers/news/philadelphia-76ers-sign-4x-nba-champion-and-22x-all-star-lebron-james"
+      "https://www.nba.com/sixers/news/philadelphia-76ers-sign-4x-nba-champion-and-22x-all-star-lebron-james",
+      "https://www.basketball-reference.com/players/j/jamesle01.html"
     ]
   },
   "honors": {
@@ -99,7 +101,8 @@
       "https://www.nba.com/news/players-with-most-all-nba-selections-ever",
       "https://www.nba.com/news/lebron-james-close-to-being-the-only-member-of-the-30k-10k-10k-club",
       "https://www.usab.com/players/lebron-james"
-    ]
+    ],
+    "notes": "NBA honors count is a category-level snapshot, not an import-ready list of individually dated award events."
   },
   "notes": [
     "Do not create per-season award rows from category counts: accolade years and All-NBA team tiers must be individually checked before import.",
