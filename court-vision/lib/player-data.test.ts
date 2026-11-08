@@ -12,6 +12,9 @@ import { groupLegacyHonors } from "./legacy-honors";
 import { summarizeStoredPlayoffCareer } from "./playoff-career";
 import { summarizePlayoffSeasons } from "./playoff-summary";
 import { readPlayoffShooting } from "./playoff-shooting-sources";
+import { getPlayerBio, renderBioSegments } from "./player-bios";
+import ComparePage from "../app/compare/page";
+import ComparisonBoard from "../app/compare/ComparisonBoard";
 
 const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -448,4 +451,74 @@ test("player profile omits reference-style advanced stats while keeping career a
   assert.ok(!html.includes("VORP:"));
   assert.ok(!html.includes("PER:"));
   assert.ok(!html.includes("BPM:"));
+});
+
+test("both hosted player bios are reviewed, distinct and include personal story, not boilerplate", () => {
+  const jordan = getPlayerBio("michael_jordan");
+  const lebron = getPlayerBio("lebron_james");
+  assert.equal(jordan?.reviewed, true);
+  assert.equal(lebron?.reviewed, true);
+  assert.ok(jordan?.narrative.includes("Air Jordan"));
+  assert.ok(lebron?.narrative.includes("Akron"));
+  assert.notEqual(jordan?.narrative, lebron?.narrative);
+  assert.equal(getPlayerBio("unknown_player"), null);
+  assert.ok(renderBioSegments(jordan!.narrative).some(part => part.emphasized && part.text.includes("His Airness")));
+});
+
+test("reviewed Jordan story appears on profile and missing bios do not invent facts", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Michael Jordan", external_id: "michael_jordan" }]);
+    if (url.pathname.endsWith("/player_career_stats")) return response([{ career_ppg: 30.1, games_played: 1072 }]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "1" }) }));
+  assert.ok(html.includes("Beyond the Numbers"));
+  assert.ok(html.includes("Air Jordan"));
+  assert.ok(html.includes("His Airness"));
+  assert.ok(html.includes("Compare Michael Jordan"));
+});
+
+test("comparison board shows selected career, playoff and trophy data without an invented winner", () => {
+  const left = {
+    id: 1, name: "Michael Jordan", position: "SG", cutoff: "full retired career",
+    career: { games: 1072, ppg: 30.1, ts: 0.569 },
+    playoffs: { games: 179, appearances: 13, ppg: 33.4 },
+    honors: { championships: 6, mvps: 5, finalsMvps: 6 }, playoffGames: 179,
+  };
+  const right = {
+    id: 7, name: "LeBron James", position: "SF", cutoff: "2025–26",
+    career: { games: 1622, ppg: 26.8, ts: 0.590 },
+    playoffs: { games: 302, appearances: 19, ppg: 28.2 },
+    honors: { championships: 4, mvps: 4, finalsMvps: 4 }, playoffGames: 302,
+  };
+  const html = renderToStaticMarkup(createElement(ComparisonBoard, { left, right }));
+  assert.ok(html.includes("What matters to you"));
+  assert.ok(html.includes("True shooting"));
+  assert.ok(html.includes("6</td>"));
+  assert.ok(html.includes("4</td>"));
+  assert.ok(html.includes("2025–26"));
+  assert.ok(!html.includes("GOAT score"));
+});
+
+test("compare route serves real player options and selects two different profiles", async () => {
+  process.env.COURT_VISION_PLAYOFF_SUMMARIES_ENABLED = "false";
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) {
+      if (url.searchParams.has("id")) {
+        return response([{ id: Number(url.searchParams.get("id")!.slice(3)),
+          name: url.searchParams.get("id") === "eq.1" ? "Michael Jordan" : "LeBron James",
+          external_id: url.searchParams.get("id") === "eq.1" ? "michael_jordan" : "lebron_james" }]);
+      }
+      return response([{ id: 1, name: "Michael Jordan" }, { id: 7, name: "LeBron James" }]);
+    }
+    if (url.pathname.endsWith("/player_career_stats")) return response([{ games_played: 100, career_ppg: 25 }]);
+    if (url.pathname.endsWith("/player_accolades")) return response([]);
+    if (url.pathname.endsWith("/player_seasons")) return response([]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await ComparePage({searchParams: Promise.resolve({left:"1",right:"7"})}));
+  assert.ok(html.includes("Michael Jordan"));
+  assert.ok(html.includes("LeBron James"));
+  assert.ok(html.includes("Your Debate. Your Criteria."));
+  assert.ok(html.includes("What matters to you"));
 });
