@@ -206,7 +206,7 @@ export default async function PlayerProfilePage({
           </p>
         </section>
       ) : (
-        <p role="status">This player's personal story is awaiting editorial review.</p>
+        <p role="status">This player’s personal story is awaiting editorial review.</p>
       )}
       <p style={{ marginBottom: "1.75rem" }}>
         <Link href={`/compare?left=${id}&right=${Number(id) === 1 ? 7 : 1}`}>
