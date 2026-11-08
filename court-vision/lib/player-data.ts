@@ -28,24 +28,19 @@ export async function readPlayerProfile(id: string) {
       .select("*").eq("id", id).maybeSingle().retry(false);
     if (error) throw error;
     if (!player) return null;
-    const [career, accolades, seasons] = await Promise.all([
+    const [career, accolades] = await Promise.all([
       client.from("player_career_stats").select("*").eq("player_id", id).maybeSingle().retry(false),
       client.from("player_accolades").select("*").eq("player_id", id)
         .order("season_year", { ascending: true, nullsFirst: false })
         .order("accolade_name", { ascending: true }).retry(false),
-      client.from("player_seasons").select("*, teams (name, abbreviation)")
-        .eq("player_id", id).eq("league", "NBA")
-        .in("season_type", ["regular_season", "playoffs"])
-        .order("season_year", { ascending: true }).retry(false),
     ]);
-    if (career.error || accolades.error || seasons.error) {
-      throw career.error || accolades.error || seasons.error;
+    if (career.error || accolades.error) {
+      throw career.error || accolades.error;
     }
     return {
       player,
       careerStats: career.data,
       accolades: accolades.data ?? [],
-      seasons: seasons.data ?? [],
     };
   });
 }
