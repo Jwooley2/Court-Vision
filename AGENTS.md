@@ -26,6 +26,8 @@ Your responsibility is to translate the product vision into small, verifiable en
 4. Source advanced metrics with provenance, methodology, and sensible era-availability disclaimers.
 5. Compare players fairly across eras. Make weighting choices and assumptions visible to users.
 6. Keep UI code reusable and avoid unnecessary infrastructure.
+7. Every hosted player should receive a **unique, complimentary, source-grounded editorial bio**—not a generic boilerplate sports summary. No invented backstories; publishing requires a reviewed biography under `court-vision/docs/player-biography-editorial-policy.md`.
+8. Court Vision is a career-summary and player-comparison experience, **not a season-table clone of Basketball Reference**; preserve TS% but omit PER, WS, BPM, and VORP from player profiles as approved by the founder.
 
 ## Engineering and safety boundaries
 - Before editing, inspect relevant files and summarize the current behavior.
