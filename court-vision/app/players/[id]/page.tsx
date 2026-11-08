@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { readPlayerProfile } from "@/lib/player-data";
+import { readPlayerProfile, readPlayers } from "@/lib/player-data";
+import CareerStatsPanel, { ComparePlayer } from "./CareerStatsPanel";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -119,6 +120,8 @@ export default async function PlayerProfilePage({
   const profile = await readPlayerProfile(id);
   if (!profile) notFound();
   const { player, careerStats, accolades } = profile;
+  // Comparison directory is optional: an outage must not hide the player profile.
+  const comparisonPlayers = await readPlayers({}).catch(() => []);
 
   const typedAccolades = (accolades || []) as PlayerAccolade[];
   const groupedAccolades = groupAccolades(typedAccolades);
@@ -181,7 +184,7 @@ export default async function PlayerProfilePage({
       )}
 
       <section style={{ marginBottom: "2rem" }}>
-        <h2>Career Stats</h2>
+        <h2>Career Overview</h2>
 
         <p>Games Played: {careerStats?.games_played ?? "—"}</p>
         <p>Seasons Played: {careerStats?.seasons_played ?? "—"}</p>
@@ -211,15 +214,8 @@ export default async function PlayerProfilePage({
         <p>VORP: {formatStat(careerStats?.career_vorp, 2)}</p>
       </section>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2>Regular Season / Playoffs / Compare</h2>
-        <p>
-          This profile currently displays available career summaries.
-          Playoff career summaries and head-to-head comparison will appear here
-          after the source data is independently validated. Missing values are
-          unavailable, not zero.
-        </p>
-      </section>
+      <CareerStatsPanel playerId={Number(id)} playerName={player.name}
+        regular={careerStats} players={comparisonPlayers as ComparePlayer[]} />
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>Accolade Summary</h2>
