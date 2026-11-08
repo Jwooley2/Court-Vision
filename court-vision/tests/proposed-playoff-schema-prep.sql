@@ -1,3 +1,6 @@
+-- Supabase's built-in public roles do not exist in plain PostgreSQL containers.
+CREATE ROLE anon NOLOGIN;
+CREATE ROLE authenticated NOLOGIN;
 -- Recreate relevant preexisting production index and columns in isolated PostgreSQL.
 CREATE TABLE public.players (
   id bigint PRIMARY KEY, external_id text, name text
