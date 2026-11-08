@@ -352,3 +352,18 @@ test("profile embeds Jordan's independently sourced playoff percentage only when
   assert.ok(html.includes("Career Averages"));
   assert.ok(html.includes("Regular Season"));
 });
+
+test("assists titles count consistently without changing Jordan's 61 NBA individual honors", () => {
+  const lebron = summarizeAccolades([
+    { league: "NBA", accolade_name: "NBA Assists Leader", season_year: 2020, verification_status: "cross_checked" },
+    { league: "NBA", accolade_name: "NBA Scoring Champion", season_year: 2008, verification_status: "cross_checked" },
+  ]);
+  assert.equal(lebron.nbaCount, 2);
+  assert.equal(lebron.categories.find(c => c.label === "Assists Titles")?.count, 1);
+  const jordan = summarizeAccolades([
+    { league: "NBA", accolade_name: "NBA Scoring Champion", season_year: 1987 },
+    { league: "NBA", accolade_name: "NBA Steals Leader", season_year: 1988 },
+  ]);
+  assert.equal(jordan.categories.find(c => c.label === "Assists Titles")?.count, 0);
+  assert.equal(jordan.nbaCount, 2);
+});
