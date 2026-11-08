@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-08",
+  "project": "Court Vision",
+  "project_id": "hflvhyzewmdvlfqzonbk",
+  "scope": "LeBron James player_id 7 ONLY",
+  "automatic_full_database_backup_verified": false,
+  "reason": "Supabase Free plan; no automatic daily backup; narrow transaction plus exact preimage and compensating restore only",
+  "preimage": {
+    "players": {
+      "id": 7,
+      "external_id": "lebron_james",
+      "name": "LeBron James",
+      "position": "SF",
+      "era": "Modern",
+      "championships": 4,
+      "mvps": 4,
+      "seasons_played": 21,
+      "career_ppg": 27.2,
+      "career_rpg": 7.5,
+      "career_apg": 7.3,
+      "career_spg": 1.5,
+      "career_bpg": 0.7
+    },
+    "player_career_stats_count": 0,
+    "player_accolades_count": 0,
+    "player_seasons_count": 0,
+    "player_playoff_career_stats_table_exists": false
+  },
+  "expected_postimage": {
+    "regular_season_career_rows": 1,
+    "playoff_career_rows": 1,
+    "award_rows": 65,
+    "season_rows": 0,
+    "players_rows_updated": 1,
+    "unrelated_player_rows_changed": 0
+  },
+  "rollback_instructions": "After import, use captured row IDs and external identity guard in a single transaction to delete only the rows created by this import, restore the listed original player 7 fields, and leave other players untouched. The additive playoff table can be retained empty or dropped only after schema dependency review.",
+  "approval": "User explicitly requested LeBron data be put in on Nov 8, 2026; production writes constrained to this scope. No deployment/merge authorization implied."
+}
