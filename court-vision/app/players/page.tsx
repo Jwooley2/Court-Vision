@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { readPlayers } from "@/lib/player-data";
+import { getPlayerBio } from "@/lib/player-bios";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -15,6 +16,7 @@ type CareerStats = {
 type PlayerWithCareerStats = {
   id: number;
   name: string;
+  external_id?: string | null;
   position: string | null;
   era: string | null;
   championships: number | null;
@@ -155,6 +157,8 @@ export default async function PlayersPage({
         {players?.map((player) => {
           const typedPlayer = player as PlayerWithCareerStats;
           const careerStats = getCareerStats(typedPlayer);
+          const bio = getPlayerBio(typedPlayer.external_id);
+          const excerpt = bio?.narrative.replaceAll("**", "");
 
           return (
             <a
@@ -178,6 +182,12 @@ export default async function PlayersPage({
               <p style={{ marginBottom: "1rem", color: "#bbb" }}>
                 {typedPlayer.position} • {typedPlayer.era}
               </p>
+
+              {excerpt && (
+                <p style={{ color: "#ddd", lineHeight: 1.55, fontSize: "0.92rem", minHeight: "4rem" }}>
+                  {excerpt.length > 155 ? excerpt.slice(0, 152).trimEnd() + "…" : excerpt}
+                </p>
+              )}
 
               <p>
                 {formatStat(careerStats?.career_ppg)} PPG /{" "}
