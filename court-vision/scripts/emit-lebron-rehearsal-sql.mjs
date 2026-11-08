@@ -120,6 +120,10 @@ ${transaction}
 ${assertCount}
 ROLLBACK;
 ${assertEmpty}`,
+  "rehearse-failure.sql": \`BEGIN;
+\${transaction}
+INSERT INTO public.player_accolades (player_id,league,accolade_type,accolade_name,season_year,verification_status) VALUES (999999,'NBA','mvp','Deliberate invalid reference',2000,'cross_checked');
+COMMIT;\`,
   "rehearse-commit.sql": `BEGIN;
 ${transaction}
 ${transaction}
