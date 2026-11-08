@@ -99,7 +99,7 @@ export default function CareerStatsPanel({
                   ))}</tbody>
                 </table>
               </div>
-              {!opponentCareer && <p role="status">The selected player's career summary is incomplete.</p>}
+              {!opponentCareer && <p role="status">The selected player&apos;s career summary is incomplete.</p>}
             </>
           )}
           {!opponent && <p>Select another player to see the available shared career averages.</p>}
