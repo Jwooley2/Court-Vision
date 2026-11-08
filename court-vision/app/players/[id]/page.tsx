@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { readPlayerProfile } from "@/lib/player-data";
-import SeasonStatsTable, { PlayerSeason } from "./SeasonStatsTable";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -119,11 +118,10 @@ export default async function PlayerProfilePage({
 
   const profile = await readPlayerProfile(id);
   if (!profile) notFound();
-  const { player, careerStats, accolades, seasons } = profile;
+  const { player, careerStats, accolades } = profile;
 
   const typedAccolades = (accolades || []) as PlayerAccolade[];
   const groupedAccolades = groupAccolades(typedAccolades);
-  const typedSeasons = (seasons || []) as PlayerSeason[];
 
   const accoladeHighlights = [
     {
@@ -176,7 +174,7 @@ export default async function PlayerProfilePage({
         {player.position} • {player.era}
       </p>
 
-      {(!careerStats || typedAccolades.length === 0 || typedSeasons.length === 0) && (
+      {(!careerStats || typedAccolades.length === 0) && (
         <p role="status">
           This profile is incomplete. Unavailable data is shown as —; it does not mean zero.
         </p>
@@ -213,7 +211,15 @@ export default async function PlayerProfilePage({
         <p>VORP: {formatStat(careerStats?.career_vorp, 2)}</p>
       </section>
 
-      <SeasonStatsTable seasons={typedSeasons} />
+      <section style={{ marginBottom: "2rem" }}>
+        <h2>Regular Season / Playoffs / Compare</h2>
+        <p>
+          This profile currently displays available career summaries.
+          Playoff career summaries and head-to-head comparison will appear here
+          after the source data is independently validated. Missing values are
+          unavailable, not zero.
+        </p>
+      </section>
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>Accolade Summary</h2>
