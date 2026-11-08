@@ -136,7 +136,7 @@ test("incomplete profile renders unknown accolades, never fabricated zero totals
   fixture(url => response(url.pathname.endsWith("/players") ? [{ id: 7, name: "Fixture Player" }] : []));
   const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "7" }) }));
   assert.ok(html.includes("This profile is incomplete"));
-  assert.ok(html.includes("Accolade data is not available"));
+  assert.ok(html.includes("Individual award totals are not available"));
   assert.equal((html.match(/font-weight:bold">—<\/p>/g) ?? []).length, 8);
   assert.equal((html.match(/font-weight:bold">0<\/p>/g) ?? []).length, 0);
 });
