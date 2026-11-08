@@ -7,6 +7,7 @@ on:
     paths:
       - 'court-vision/data/staging/lebron-james-through-2025-26.json'
       - 'court-vision/scripts/verify-lebron-staging.mjs'
+      - 'court-vision/scripts/preview-lebron-mapping.mjs'
       - '.github/workflows/validate-lebron-staging.yml'
 
 permissions:
@@ -27,3 +28,5 @@ jobs:
           node-version: '22'
       - name: Check deterministic career totals and honor scopes
         run: node court-vision/scripts/verify-lebron-staging.mjs
+      - name: Validate offline import mapping preview
+        run: node court-vision/scripts/preview-lebron-mapping.mjs > /tmp/lebron-import-preview.json
