@@ -1,5 +1,6 @@
 import { withPlayerRead } from "./supabase";
 import { summarizePlayoffSeasons, type PlayoffSeasonRow } from "./playoff-summary";
+import { summarizeStoredPlayoffCareer, type StoredPlayoffCareer } from "./playoff-career";
 
 export type PlayerFilters = { search?: string; position?: string; era?: string };
 
@@ -29,24 +30,38 @@ export async function readPlayerProfile(id: string) {
       .select("*").eq("id", id).maybeSingle().retry(false);
     if (error) throw error;
     if (!player) return null;
-    const [career, accolades, playoffRows] = await Promise.all([
+    // Do not query the new table until the founder separately approves its migration.
+    // Prefer one career-level read; retain legacy Jordan season fallback as needed.
+    const storedPlayoffEnabled = process.env.COURT_VISION_PLAYOFF_SUMMARIES_ENABLED === "true";
+    const [career, accolades, playoffRecord] = await Promise.all([
       client.from("player_career_stats").select("*").eq("player_id", id).maybeSingle().retry(false),
       client.from("player_accolades").select("*").eq("player_id", id)
         .order("season_year", { ascending: true, nullsFirst: false })
         .order("accolade_name", { ascending: true }).retry(false),
-      client.from("player_seasons")
+      storedPlayoffEnabled
+        ? client.from("player_playoff_career_stats").select("*").eq("player_id", id).maybeSingle().retry(false)
+        : Promise.resolve({ data: null, error: null }),
+    ]);
+    if (career.error || accolades.error || playoffRecord.error) {
+      throw career.error || accolades.error || playoffRecord.error;
+    }
+    let playoffs = summarizeStoredPlayoffCareer(
+      (playoffRecord.data ?? null) as StoredPlayoffCareer | null
+    );
+    if (!playoffs.summary) {
+      // Historical fallback for Jordan and existing season-based profiles only.
+      const fallback = await client.from("player_seasons")
         .select("season_year,stint_type,games_played,points_total,rebounds_total,assists_total,steals_total,blocks_total,verification_status")
         .eq("player_id", id).eq("league", "NBA").eq("season_type", "playoffs")
-        .order("season_year", { ascending: true }).retry(false),
-    ]);
-    if (career.error || accolades.error || playoffRows.error) {
-      throw career.error || accolades.error || playoffRows.error;
+        .order("season_year", { ascending: true }).retry(false);
+      if (fallback.error) throw fallback.error;
+      playoffs = summarizePlayoffSeasons((fallback.data ?? []) as PlayoffSeasonRow[]);
     }
     return {
       player,
       careerStats: career.data,
       accolades: accolades.data ?? [],
-      playoffs: summarizePlayoffSeasons((playoffRows.data ?? []) as PlayoffSeasonRow[]),
+      playoffs,
     };
   });
 }

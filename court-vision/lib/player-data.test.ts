@@ -9,6 +9,7 @@ import { createElement } from "react";
 import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
 import { summarizeAccolades, AccoladeRecord } from "./accolade-summary";
 import { groupLegacyHonors } from "./legacy-honors";
+import { summarizeStoredPlayoffCareer } from "./playoff-career";
 import { summarizePlayoffSeasons } from "./playoff-summary";
 import { readPlayoffShooting } from "./playoff-shooting-sources";
 
@@ -16,6 +17,7 @@ const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const originalVercelEnv = process.env.VERCEL_ENV;
 const originalFixtureMode = process.env.COURT_VISION_PREVIEW_FIXTURES;
+const originalPlayoffFlag = process.env.COURT_VISION_PLAYOFF_SUMMARIES_ENABLED;
 const calls: URL[] = [];
 const response = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
@@ -35,6 +37,7 @@ beforeEach(() => {
   process.env.NEXT_PUBLIC_SUPABASE_URL = "https://fixture.invalid";
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "fixture-only-key";
   delete process.env.COURT_VISION_PREVIEW_FIXTURES;
+  delete process.env.COURT_VISION_PLAYOFF_SUMMARIES_ENABLED;
   // Every test replaces fetch; an unexpected network attempt fails closed.
   fixture(() => { throw new Error("Unexpected fixture request"); });
 });
@@ -49,6 +52,8 @@ afterEach(() => {
   else process.env.VERCEL_ENV = originalVercelEnv;
   if (originalFixtureMode === undefined) delete process.env.COURT_VISION_PREVIEW_FIXTURES;
   else process.env.COURT_VISION_PREVIEW_FIXTURES = originalFixtureMode;
+  if (originalPlayoffFlag === undefined) delete process.env.COURT_VISION_PLAYOFF_SUMMARIES_ENABLED;
+  else process.env.COURT_VISION_PLAYOFF_SUMMARIES_ENABLED = originalPlayoffFlag;
 });
 
 test("preview fixtures load through the SDK without real configuration or network", async () => {
@@ -115,7 +120,7 @@ test("valid profile reads career accolades and narrow playoff totals concurrentl
   fixture(async url => {
     if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Fixture Player" }]);
     detailStarts++;
-    if (detailStarts === 3) release();
+    if (detailStarts === 2) release();
     await allStarted;
     if (url.pathname.endsWith("/player_career_stats")) return response([{ games_played: 10 }]);
     return response([{ id: 1 }]);
@@ -366,4 +371,81 @@ test("assists titles count consistently without changing Jordan's 61 NBA individ
   ]);
   assert.equal(jordan.categories.find(c => c.label === "Assists Titles")?.count, 0);
   assert.equal(jordan.nbaCount, 2);
+});
+
+test("stored playoff career summary avoids all individual season-history reads", async () => {
+  process.env.COURT_VISION_PLAYOFF_SUMMARIES_ENABLED = "true";
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{ id: 7, name: "Fixture Player" }]);
+    if (url.pathname.endsWith("/player_career_stats")) return response([{ games_played: 10 }]);
+    if (url.pathname.endsWith("/player_accolades")) return response([]);
+    if (url.pathname.endsWith("/player_playoff_career_stats")) return response([{
+      games_played: 10, postseasons_played: 2, points_total: 300,
+      rebounds_total: 80, assists_total: 70, steals_total: 20,
+      blocks_total: 10, field_goals_made: 120, field_goals_attempted: 250,
+      verification_status: "cross_checked", source_cutoff: "2025-26"
+    }]);
+    throw new Error("Unexpected season table request");
+  });
+  const profile = await readPlayerProfile("7");
+  assert.equal(profile?.playoffs.games, 10);
+  assert.equal(profile?.playoffs.summary?.career_ppg, 30);
+  assert.equal(profile?.playoffs.summary?.career_fg_pct, .48);
+  assert.ok(calls.some(url => url.pathname.endsWith("/player_playoff_career_stats")));
+  assert.ok(!calls.some(url => url.pathname.endsWith("/player_seasons")));
+});
+
+test("new playoff storage flag defaults off, preserving existing profiles before migration", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Fixture Player" }]);
+    if (url.pathname.endsWith("/player_seasons")) return response([{
+      season_year: 1991, stint_type: "team", games_played: 5,
+      points_total: 150, rebounds_total: 30, assists_total: 25,
+      steals_total: 10, blocks_total: 4, verification_status: "single_source"
+    }]);
+    return response([]);
+  });
+  const profile = await readPlayerProfile("1");
+  assert.equal(profile?.playoffs.summary?.career_ppg, 30);
+  assert.ok(!calls.some(url => url.pathname.endsWith("/player_playoff_career_stats")));
+});
+
+test("playoff career totals reject missing and impossible shooting totals", () => {
+  const base = {
+    games_played: 302, postseasons_played: 18, points_total: 8521,
+    rebounds_total: 2695, assists_total: 2168, steals_total: 506,
+    blocks_total: 287, field_goals_made: 3055, field_goals_attempted: 6167,
+    verification_status: "cross_checked", source_cutoff: "2025-26",
+  };
+  const result = summarizeStoredPlayoffCareer(base);
+  assert.equal(Number(Number(result.summary?.career_ppg).toFixed(1)), 28.2);
+  assert.equal(Number(Number(result.summary?.career_fg_pct).toFixed(3)), .495);
+  assert.equal(result.sourceCutoff, "2025-26");
+  assert.equal(summarizeStoredPlayoffCareer({...base, field_goals_attempted: 2000}).summary?.career_fg_pct, null);
+});
+
+test("player profile omits reference-style advanced stats while keeping career and efficiency sections", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{
+      id: 7, name: "LeBron James", position: "SF", era: "Modern",
+    }]);
+    if (url.pathname.endsWith("/player_career_stats")) return response([{
+      games_played: 1622, seasons_played: 23,
+      career_ppg: 26.8, career_fg_pct: 0.507,
+      career_per: 27.2, career_ws: 265.2, career_bpm: 8.7, career_vorp: 151.4,
+    }]);
+    if (url.pathname.endsWith("/player_accolades")) return response([]);
+    if (url.pathname.endsWith("/player_seasons")) return response([]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "7" }) }));
+  assert.ok(html.includes("Career Overview"));
+  assert.ok(html.includes("Efficiency"));
+  assert.ok(html.includes("Career Averages"));
+  assert.ok(html.includes("Individual Accolades"));
+  assert.ok(!html.includes("Advanced Stats"));
+  assert.ok(!html.includes("Win Shares"));
+  assert.ok(!html.includes("VORP:"));
+  assert.ok(!html.includes("PER:"));
+  assert.ok(!html.includes("BPM:"));
 });
