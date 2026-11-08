@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { readPlayerProfile, readPlayers } from "@/lib/player-data";
 import CareerStatsPanel, { ComparePlayer } from "./CareerStatsPanel";
+import { summarizeAccolades } from "@/lib/accolade-summary";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -125,6 +126,7 @@ export default async function PlayerProfilePage({
 
   const typedAccolades = (accolades || []) as PlayerAccolade[];
   const groupedAccolades = groupAccolades(typedAccolades);
+  const honorSummary = summarizeAccolades(typedAccolades);
 
   const accoladeHighlights = [
     {
@@ -216,6 +218,37 @@ export default async function PlayerProfilePage({
 
       <CareerStatsPanel playerId={Number(id)} playerName={player.name}
         regular={careerStats} players={comparisonPlayers as ComparePlayer[]} />
+
+      <section style={{ marginBottom: "2rem" }} aria-labelledby="individual-honors-heading">
+        <h2 id="individual-honors-heading">Individual Accolades</h2>
+        {!honorSummary.hasRecords ? (
+          <p role="status">Individual award totals are not available for this profile yet.</p>
+        ) : (
+          <>
+            <p>
+              Recorded NBA individual accolades: <strong>{honorSummary.nbaCount}</strong>
+              {" • "}Olympic medals: <strong>{honorSummary.olympicMedals}</strong>
+              {" • "}Combined selected honors: <strong>{honorSummary.combinedCount}</strong>
+            </p>
+            <p style={{ color: "#bbb" }}>
+              {honorSummary.provisional
+                ? "Provisional counts; independent source verification is incomplete."
+                : "Counts are verified for these categories; other honors are listed below."}
+              {" "}NBA championships are excluded from individual accolade totals.
+            </p>
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              columnGap: "2rem", rowGap: "0.5rem",
+            }}>
+              {honorSummary.categories.map(category => (
+                <div key={category.name} style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span>{category.label}</span><strong>{category.count}</strong>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>Accolade Summary</h2>
