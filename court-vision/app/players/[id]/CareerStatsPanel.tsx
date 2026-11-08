@@ -92,11 +92,11 @@ export default function CareerStatsPanel({
                 ))}
               </div>
               <p style={{ fontSize: "0.875rem", color: "#999" }}>
-                Career playoff averages are calculated from recorded season totals divided by
-                playoff games. {playoffShooting
-                  ? "FG% is calculated from cross-checked career field goals made and attempted."
-                  : "FG% is unavailable until career makes and attempts are verified."}
-                {" "}No regular-season shooting figure is substituted.
+                Career playoff averages are based on career playoff totals or reconciled
+                historical playoff game records. {playoffs.summary?.career_fg_pct != null
+                  ? "FG% is calculated from verified career playoff field goals made and attempted."
+                  : "FG% is unavailable until career playoff makes and attempts are verified."}
+                {" "}Regular-season shooting figures are never substituted.
               </p>
               {playoffShooting && (
                 <p style={{ fontSize: "0.875rem", color: "#999" }}>
@@ -159,7 +159,7 @@ export default function CareerStatsPanel({
             ))}
           </div>
           <p style={{ fontSize: "0.875rem", color: "#999" }}>
-            Available NBA regular-season career summary; full record and source verification are ongoing.
+            Available NBA regular-season career summary. Active players may have games after the recorded data cutoff.
           </p>
         </div>
       )}
