@@ -7,6 +7,7 @@ import PlayerProfilePage from "../app/players/[id]/page";
 import CareerStatsPanel from "../app/players/[id]/CareerStatsPanel";
 import { createElement } from "react";
 import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
+import { summarizeAccolades, AccoladeRecord } from "./accolade-summary";
 
 const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -202,4 +203,40 @@ test("career panel shows six basic metrics and view controls without inventing m
   assert.ok(html.includes("49.7%"));
   assert.ok(html.includes("—")); // unknown RPG/other metrics are not zeros
   assert.ok(!html.includes("Verified playoff career summaries")); // not mislabeled as regular stats
+});
+
+
+test("selected NBA accolades total 61 and Olympic gold medals are separate", () => {
+  const categories: Array<[string, number, string | null]> = [
+    ["NBA MVP", 5, null], ["NBA Finals MVP", 6, null],
+    ["NBA Defensive Player of the Year", 1, null],
+    ["NBA Rookie of the Year", 1, null],
+    ["All-NBA", 11, "First Team"],
+    ["NBA All-Defensive Team", 9, "First Team"],
+    ["NBA All-Star", 14, null], ["NBA All-Rookie Team", 1, "First Team"],
+    ["NBA Scoring Champion", 10, null], ["NBA Steals Leader", 3, null],
+  ];
+  const rows: AccoladeRecord[] = categories.flatMap(([name, count, result]) =>
+    Array.from({ length: count }, (_, i) => ({
+      league: "NBA", accolade_name: name, season_year: 1980 + i,
+      result, verification_status: "needs_fallback_cross_check",
+    }))
+  );
+  rows.push(
+    { league: "NBA", accolade_name: "NBA Champion", season_year: 1991 },
+    { league: "NBA", accolade_name: "NBA All-Star Game MVP", season_year: 1988 },
+    { league: "Olympics", accolade_name: "Olympic Gold Medal", season_year: 1984 },
+    { league: "Olympics", accolade_name: "Olympic Gold Medal", season_year: 1992 },
+  );
+  // Duplicate importer record should never increase a career total.
+  rows.push({ ...rows[0] });
+  const result = summarizeAccolades(rows);
+  assert.equal(result.nbaCount, 61);
+  assert.equal(result.olympicMedals, 2);
+  assert.equal(result.combinedCount, 63);
+  assert.equal(result.provisional, true);
+});
+
+test("no award records means no verified zero-accolade claim", () => {
+  assert.equal(summarizeAccolades([]).hasRecords, false);
 });
