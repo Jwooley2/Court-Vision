@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 const port = 3477;
 const origin = `http://127.0.0.1:${port}`;
-const server = spawn("npm", ["run", "start", "--", "-p", String(port)], {
+const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", String(port)], {
   cwd: process.cwd(),
   env: {
     ...process.env,
@@ -45,4 +45,8 @@ try {
   }
 } finally {
   server.kill("SIGTERM");
+  await new Promise(resolve => {
+    if (server.exitCode !== null) resolve();
+    else server.once("exit", resolve);
+  });
 }
