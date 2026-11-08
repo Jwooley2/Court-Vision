@@ -8,6 +8,7 @@ import CareerStatsPanel from "../app/players/[id]/CareerStatsPanel";
 import { createElement } from "react";
 import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
 import { summarizeAccolades, AccoladeRecord } from "./accolade-summary";
+import { groupLegacyHonors } from "./legacy-honors";
 
 const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -239,4 +240,42 @@ test("selected NBA accolades total 61 and Olympic gold medals are separate", () 
 
 test("no award records means no verified zero-accolade claim", () => {
   assert.equal(summarizeAccolades([]).hasRecords, false);
+});
+
+
+test("legacy honors group NCAA, Olympic and other basketball awards apart from NBA totals", () => {
+  const rows = [
+    { id: 1, league: "NCAA", accolade_type: "college", accolade_name: "NCAA Champion", season_year: 1982 },
+    { id: 2, league: "ACC", accolade_type: "college", accolade_name: "ACC Player of the Year", season_year: 1984 },
+    { id: 3, league: "Olympics", accolade_type: "international", accolade_name: "Olympic Gold Medal", season_year: 1984 },
+    { id: 4, league: "Naismith", accolade_type: "hall_of_fame", accolade_name: "Naismith Memorial Basketball Hall of Fame", season_year: 2009 },
+    { id: 5, league: "NBA", accolade_type: "mvp", accolade_name: "NBA MVP", season_year: 1988 },
+    { id: 6, league: "NBA", accolade_type: "championship", accolade_name: "NBA Champion", season_year: 1991 },
+  ];
+  const groups = groupLegacyHonors(rows);
+  assert.deepEqual(groups.map(group => [group.title, group.records.length]), [
+    ["College & NCAA", 2], ["Olympic & International", 1], ["Other Basketball Honors", 1],
+  ]);
+  assert.equal(summarizeAccolades(rows).nbaCount, 1);
+  assert.equal(summarizeAccolades(rows).olympicMedals, 1);
+  const deduped = groupLegacyHonors([...rows, { ...rows[0], id: 999 }]);
+  assert.equal(deduped[0].records.length, 2);
+});
+
+test("profile provides collapsed legacy honors section with collegiate achievements", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Fixture Legend", position: "SG", era: "1980s" }]);
+    if (url.pathname.endsWith("/player_career_stats")) return response([{ games_played: 10 }]);
+    if (url.pathname.endsWith("/player_accolades")) return response([
+      { id: 1, league: "NCAA", accolade_type: "college", accolade_name: "NCAA Champion", season_year: 1982 },
+      { id: 2, league: "NBA", accolade_type: "mvp", accolade_name: "NBA MVP", season_year: 1988 },
+    ]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "1" }) }));
+  assert.ok(html.includes("College &amp; Other Basketball Honors"));
+  assert.ok(html.includes("<details>"));
+  assert.ok(html.includes("NCAA Champion"));
+  assert.ok(html.includes("NBA MVP"));
+  assert.ok(html.includes("Recorded NBA individual accolades"));
 });
