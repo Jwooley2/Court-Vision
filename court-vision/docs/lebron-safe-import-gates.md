@@ -18,7 +18,7 @@ _Last reviewed: 2026-11-08. No SQL, database migration, or import approved._
 
 ## Gate 2 — Technical mapping and dry run
 - Read schema constraints and RLS policies before authoring SQL. Map the **career aggregate** to `player_career_stats`, and **dated honors** to `player_accolades` only after each row is verified.
-- The stored season schema is season-granular. **Do not manufacture a 23-year LeBron `player_seasons` history from career totals.** Source actual individual seasons separately.
+- **Founder confirmed career-summary-first scope**: regular-season and playoff CAREER summaries only, plus honors. Do **not** collect or import LeBron's 23 season-by-season rows as a prerequisite. Existing Jordan historical season data may be retained but is not the target profile read path.\n- **Exact production schema review (Nov 8):** `player_career_stats` has `UNIQUE(player_id)` and cannot hold both regular-season and playoff records for the same player. Implement a small, distinct `player_playoff_career_stats` table (or another explicitly reviewed period-aware structure) holding 302 playoff games and sourced totals/averages. This needs a separately approved schema migration.\n- **Exact production accolade schema review:** only `PRIMARY KEY(id)` exists, **no unique event key** on `(player_id,league,accolade_name,season_year,result)`. The disposable rehearsal uses stronger constraints than production and therefore does not prove real-table idempotency. Add a reviewed unique natural-key expression/index or use a guarded deterministic conflict check in one transaction, after inspecting duplicate/null semantics and backup.\n- Existing playoff panel calculates from season totals. Refactor to prefer a sourced playoff CAREER summary and use legacy season totals as fallback for Jordan. Never manufacture season rows from the career summary.
 - Existing playoff tab derives averages from season totals. Until LeBron's season-level rows are available, it needs an explicit, separately sourced career-level read path; otherwise show unknown rather than borrowing regular-season stats.
 - Run deterministic offline validation and a read-only dry-run diff listing every planned insert/update; require zero deletes and zero changes to Jordan.
 - Use a staging DB or isolated transaction rehearsal, with exact row counts and computed totals documented.
@@ -36,3 +36,7 @@ _Last reviewed: 2026-11-08. No SQL, database migration, or import approved._
 
 ## Current state
 **No production import is authorized or executed.** PR #19 is strictly a staged data/artifact review.
+
+## Scope confirmation from founder (Nov 8, 2026)
+
+The agreed product is **career summaries, not season-stat ingestion**. The final import scope is 1 regular-season career record, 1 playoff career record (requiring an approved schema/read path), 65 staged honors, **0 season-by-season records**, and **0 deletions**. The original 1+65 disposable transaction rehearsal covers only the already existing career/accolade tables; a revised rehearsal must cover the playoff summary table and exact accolade constraints before production approval.
