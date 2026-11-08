@@ -12,7 +12,7 @@ _Last reviewed: 2026-11-08. No SQL, database migration, or import approved._
 ## Gate 1 — Source audit
 - Cross-check all 2025–26 regular season and playoff totals against independent exports (NBA API/BALLDONTLIE and hoopR where permissions allow).
 - Record source page and source **as-of date** per metric. The NBA player page shows active-season totals and is not itself a frozen 2025–26 snapshot.
-- For awards, validate dated event lists against NBA official year-by-year lists. Confirm 13 First/4 Second/4 Third All-NBA, 5 First/1 Second All-Defensive, all 22 All-Star selections (calendar years), 4 MVP, 4 Finals MVP, 1 scoring title, 1 assists title, ROY and All-Rookie. Cross-check Olympic medals with USA Basketball/IOC.
+- Award seasons, team tiers and medal years are cross-checked for all 65 records, backed by the NBA Sixers 2026-27 game notes, NBA 2003-04 season review and Cleveland All-Rookie release, NBA official all-defense and All-NBA historical lists, and USA Basketball history. Confirm the source citations/rights remain suitable before publication; do not confuse event-level cross-check with an approved import.
 - Confirm the shared accolade category policy includes assists titles, but excludes championships from individual counts. NBA-only subtotal: 61. Olympics: 4 medals. These figures represent selected categories, not every basketball honor.
 - Do not mark a category/event `cross_checked` merely because a totals validator passed.
 
