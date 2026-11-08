@@ -295,11 +295,11 @@ test("Jordan playoff season totals produce historical per-game rates without inv
     steals_total: 376, blocks_total: 158, verification_status: "single_source",
   }]);
   assert.equal(summary.games, 179);
-  assert.equal(Number(summary.summary?.career_ppg?.toFixed(1)), 33.4);
-  assert.equal(Number(summary.summary?.career_rpg?.toFixed(1)), 6.4);
-  assert.equal(Number(summary.summary?.career_apg?.toFixed(1)), 5.7);
-  assert.equal(Number(summary.summary?.career_spg?.toFixed(1)), 2.1);
-  assert.equal(Number(summary.summary?.career_bpg?.toFixed(1)), 0.9);
+  assert.equal(Number(Number(summary.summary?.career_ppg).toFixed(1)), 33.4);
+  assert.equal(Number(Number(summary.summary?.career_rpg).toFixed(1)), 6.4);
+  assert.equal(Number(Number(summary.summary?.career_apg).toFixed(1)), 5.7);
+  assert.equal(Number(Number(summary.summary?.career_spg).toFixed(1)), 2.1);
+  assert.equal(Number(Number(summary.summary?.career_bpg).toFixed(1)), 0.9);
   assert.equal(summary.summary?.career_fg_pct, null);
   assert.equal(summary.provisional, true);
 });
