@@ -217,15 +217,6 @@ export default async function PlayerProfilePage({
         <p>TS%: {formatPercent(careerStats?.career_ts_pct)}</p>
       </section>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2>Advanced Stats</h2>
-
-        <p>PER: {formatStat(careerStats?.career_per, 2)}</p>
-        <p>Win Shares: {formatStat(careerStats?.career_ws, 2)}</p>
-        <p>BPM: {formatStat(careerStats?.career_bpm, 2)}</p>
-        <p>VORP: {formatStat(careerStats?.career_vorp, 2)}</p>
-      </section>
-
       <CareerStatsPanel playerId={Number(id)} playerName={player.name}
         regular={careerStats} playoffs={playoffSummary} playoffShooting={playoffShooting}
         players={comparisonPlayers as ComparePlayer[]} />
