@@ -1,0 +1,29 @@
+name: Validate LeBron 2025-26 staging package
+
+on:
+  push:
+    branches: ["scout/lebron-2025-26-career-pilot"]
+  pull_request:
+    paths:
+      - 'court-vision/data/staging/lebron-james-through-2025-26.json'
+      - 'court-vision/scripts/verify-lebron-staging.mjs'
+      - '.github/workflows/validate-lebron-staging.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout staging files
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Configure Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Check deterministic career totals and honor scopes
+        run: node court-vision/scripts/verify-lebron-staging.mjs
