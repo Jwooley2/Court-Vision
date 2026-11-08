@@ -9,6 +9,7 @@ import { createElement } from "react";
 import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
 import { summarizeAccolades, AccoladeRecord } from "./accolade-summary";
 import { groupLegacyHonors } from "./legacy-honors";
+import { summarizePlayoffSeasons } from "./playoff-summary";
 
 const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -106,14 +107,14 @@ test("identity failure is sanitized and does not query details or retry", async 
   assert.equal(calls.length, 1);
 });
 
-test("valid profile reads career and accolades concurrently without a season-history query", async () => {
+test("valid profile reads career accolades and narrow playoff totals concurrently", async () => {
   let detailStarts = 0;
   let release!: () => void;
   const allStarted = new Promise<void>(resolve => { release = resolve; });
   fixture(async url => {
     if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Fixture Player" }]);
     detailStarts++;
-    if (detailStarts === 2) release();
+    if (detailStarts === 3) release();
     await allStarted;
     if (url.pathname.endsWith("/player_career_stats")) return response([{ games_played: 10 }]);
     return response([{ id: 1 }]);
@@ -121,8 +122,13 @@ test("valid profile reads career and accolades concurrently without a season-his
   const profile = await readPlayerProfile("1");
   assert.equal(profile?.careerStats.games_played, 10);
   assert.equal(profile?.accolades.length, 1);
-  assert.equal(detailStarts, 2);
-  assert.ok(calls.every(url => !url.pathname.endsWith("/player_seasons")));
+  assert.equal(detailStarts, 3);
+  const seasonQuery = calls.find(url => url.pathname.endsWith("/player_seasons"));
+  assert.ok(seasonQuery);
+  assert.equal(seasonQuery.searchParams.get("season_type"), "eq.playoffs");
+  assert.equal(seasonQuery.searchParams.get("league"), "eq.NBA");
+  assert.ok(seasonQuery.searchParams.get("select")?.includes("points_total"));
+  assert.ok(!seasonQuery.searchParams.get("select")?.includes("*"));
 });
 
 test("missing optional data stays missing rather than becoming zero", async () => {
@@ -130,6 +136,7 @@ test("missing optional data stays missing rather than becoming zero", async () =
   const profile = await readPlayerProfile("7");
   assert.equal(profile?.careerStats, null);
   assert.deepEqual(profile?.accolades, []);
+  assert.equal(profile?.playoffs.summary, null);
 });
 
 test("incomplete profile renders unknown accolades, never fabricated zero totals", async () => {
@@ -195,6 +202,7 @@ test("career panel shows six basic metrics and view controls without inventing m
     playerId: 1,
     playerName: "Fixture Player",
     regular: { career_ppg: 30.1, career_rpg: null, career_fg_pct: 0.497 },
+    playoffs: { summary: null, games: 0, seasons: 0, provisional: true },
     players: [{ id: 1, name: "Fixture Player" }, { id: 2, name: "Opponent", player_career_stats: null }],
   }));
   for (const label of ["Regular Season", "Playoffs", "Compare", "PPG", "RPG", "APG", "SPG", "BPG", "FG%"]) {
@@ -278,4 +286,39 @@ test("profile provides collapsed legacy honors section with collegiate achieveme
   assert.ok(html.includes("NCAA Champion"));
   assert.ok(html.includes("NBA MVP"));
   assert.ok(html.includes("Recorded NBA individual accolades"));
+});
+
+test("Jordan playoff season totals produce historical per-game rates without inventing FG%", () => {
+  const summary = summarizePlayoffSeasons([{
+    season_year: 1991, stint_type: "team", games_played: 179,
+    points_total: 5987, rebounds_total: 1152, assists_total: 1022,
+    steals_total: 376, blocks_total: 158, verification_status: "single_source",
+  }]);
+  assert.equal(summary.games, 179);
+  assert.equal(Number(summary.summary?.career_ppg?.toFixed(1)), 33.4);
+  assert.equal(Number(summary.summary?.career_rpg?.toFixed(1)), 6.4);
+  assert.equal(Number(summary.summary?.career_apg?.toFixed(1)), 5.7);
+  assert.equal(Number(summary.summary?.career_spg?.toFixed(1)), 2.1);
+  assert.equal(Number(summary.summary?.career_bpg?.toFixed(1)), 0.9);
+  assert.equal(summary.summary?.career_fg_pct, null);
+  assert.equal(summary.provisional, true);
+});
+
+test("playoff totals never double-count combined and team stint records", () => {
+  const summary = summarizePlayoffSeasons([
+    { season_year: 2000, stint_type: "team", games_played: 2,
+      points_total: 10, rebounds_total: 4, assists_total: 3,
+      steals_total: 1, blocks_total: 0 },
+    { season_year: 2000, stint_type: "total", games_played: 3,
+      points_total: 30, rebounds_total: 9, assists_total: 6,
+      steals_total: 3, blocks_total: 1 },
+    { season_year: 2001, stint_type: "team", games_played: 2,
+      points_total: 20, rebounds_total: 10, assists_total: 8,
+      steals_total: 2, blocks_total: null },
+  ]);
+  assert.equal(summary.games, 5);
+  assert.equal(summary.summary?.career_ppg, 10);
+  assert.equal(summary.summary?.career_rpg, 3.8);
+  assert.equal(summary.summary?.career_bpg, null);
+  assert.equal(summary.seasons, 2);
 });
