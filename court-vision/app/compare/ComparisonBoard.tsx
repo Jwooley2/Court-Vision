@@ -71,7 +71,7 @@ export default function ComparisonBoard({ left, right }: { left: ComparisonPlaye
     <section aria-label="Custom player comparison">
       <div style={{ background: "#171717", border: "1px solid #444", borderRadius: 12, padding: "1rem", marginBottom: "1.5rem" }}>
         <h2 style={{ marginTop: 0 }}>What matters to you?</h2>
-        <p style={{ color: "#aaa" }}>Choose the categories and metrics you value. Court Vision doesn't declare a winner or hide an algorithm behind a score.</p>
+        <p style={{ color: "#aaa" }}>Choose the categories and metrics you value. Court Vision does not declare a winner or hide an algorithm behind a score.</p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1.25rem" }}>
           {(Object.keys(STAT_ROWS) as GroupName[]).map(group => (
             <label key={group} style={{ cursor: "pointer" }}>
