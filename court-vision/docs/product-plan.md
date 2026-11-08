@@ -1,5 +1,15 @@
 # Court Vision Product Plan
 
+## Founder-approved product scope — November 8, 2026 (supersedes conflicting historical notes below)
+
+Court Vision is **not** another Basketball Reference. Focus on concise, sourced career summaries; regular-season and playoff averages; FG%, 3PT%, FT%, **TS%**; team championships and carefully classified individual honors. PER, Win Shares, BPM and VORP do **not** appear on public player profiles. Complete season-by-season tables are neither an ingestion requirement nor a launch feature.
+
+**Every hosted player, including ordinary role players and journeymen, gets an original, energetic, complimentary biography.** Biographies must be fact-checked, distinct to the individual's career, and approved before publication. Read `court-vision/docs/player-biography-editorial-policy.md` for editorial and data-review gates.
+
+The comparison experience should empower fans to choose which verified metrics and accomplishments they value without forcing a universal score or secretly weighting eras. The first playable implementation lives in draft PR #21. The current database stores career summaries for Jordan and LeBron, including dedicated playoff career summaries; LeBron is frozen at the **2025–26** cutoff and must not be mislabeled as live 2026–27. Scout's upcoming player batches should plan one distinct biography per player, not 23 seasons of line-by-line statistics.
+
+**Historical notes below preserve earlier planning decisions and must not override this approved scope.**
+
 ## Product Vision
 
 Court Vision is a basketball analytics and opinion platform built around player comparison, basketball history, and fan debate.
