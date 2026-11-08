@@ -659,6 +659,8 @@
     "All-Defensive teams checked against NBA official year-by-year list.",
     "Individual event review_status is not cross_checked until each event is independently verified; do not import this file.",
     "NBA All-Star years are calendar-year labels; other NBA award years are season-ending years.",
-    "All-Star selections are not individual All-Star Game MVP awards."
+    "All-Star selections are not individual All-Star Game MVP awards.",
+    "NBA 76ers 2026-27 game notes independently list LeBron's season-ending years and team tiers for 4 MVPs, 4 Finals MVPs, 21 All-NBA (13/4/4), and 6 All-Defensive (5/1), as well as Olympic medals: https://www.nba.com/gamenotes/sixers.pdf",
+    "NBA official career totals fixed at 2025-26: https://www.nba.com/stats/alltime-leaders?CF=PTS%2AGE%2A35000&SeasonType=Regular+Season; independent snapshot: https://www.sports-reference.com/stathead/basketball/vs/lebron-james-vs-michael-jordan"
   ]
 }
