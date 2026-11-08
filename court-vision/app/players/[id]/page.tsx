@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { readPlayerProfile, readPlayers } from "@/lib/player-data";
 import CareerStatsPanel, { ComparePlayer } from "./CareerStatsPanel";
 import { summarizeAccolades } from "@/lib/accolade-summary";
+import { groupLegacyHonors } from "@/lib/legacy-honors";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -125,7 +126,11 @@ export default async function PlayerProfilePage({
   const comparisonPlayers = await readPlayers({}).catch(() => []);
 
   const typedAccolades = (accolades || []) as PlayerAccolade[];
-  const groupedAccolades = groupAccolades(typedAccolades);
+  const legacyHonors = groupLegacyHonors(typedAccolades);
+  const groupedAccolades = groupAccolades(typedAccolades.filter(accolade =>
+    accolade.league === "NBA" &&
+    !["hall_of_fame", "anniversary_team", "other", "skill_contest"].includes(accolade.accolade_type)
+  ));
   const honorSummary = summarizeAccolades(typedAccolades);
 
   const accoladeHighlights = [
@@ -280,34 +285,62 @@ export default async function PlayerProfilePage({
         </div>
       </section>
 
-      <section>
-        <h2>Career Accolades</h2>
-
-        {groupedAccolades.length === 0 ? (
-          <p>Accolade data is not available for this profile yet.</p>
-        ) : (
-          groupedAccolades.map(
-            ([groupName, groupItems]: [string, PlayerAccolade[]]) => (
-              <div key={groupName} style={{ marginBottom: "1.5rem" }}>
-                <h3>
-                  {groupName} ({groupItems.length})
-                </h3>
-
-                <ul>
-                  {groupItems.map((accolade) => (
-                    <li key={accolade.id}>
-                      <strong>{accolade.accolade_name}</strong>
-                      {formatAccoladeDetails(accolade)
-                        ? ` — ${formatAccoladeDetails(accolade)}`
-                        : ""}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )
-          )
-        )}
+      <section style={{ marginBottom: "2rem" }}>
+        <details>
+          <summary style={{ cursor: "pointer", fontSize: "1.35rem", fontWeight: 700 }}>
+            NBA Awards — Year-by-Year Details
+          </summary>
+          {groupedAccolades.length === 0 ? (
+            <p>NBA award details are not available for this profile yet.</p>
+          ) : groupedAccolades.map(([groupName, groupItems]) => (
+            <div key={groupName} style={{ marginBottom: "1rem" }}>
+              <h3>{groupName} ({groupItems.length})</h3>
+              <ul>
+                {groupItems.map(accolade => (
+                  <li key={accolade.id}>
+                    <strong>{accolade.accolade_name}</strong>
+                    {formatAccoladeDetails(accolade) ? ` — ${formatAccoladeDetails(accolade)}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </details>
       </section>
+
+      <section aria-label="College and other basketball honors" style={{ marginBottom: "2rem" }}>
+        <details>
+          <summary style={{ cursor: "pointer", fontSize: "1.35rem", fontWeight: 700 }}>
+            College &amp; Other Basketball Honors
+          </summary>
+          <p style={{ color: "#bbb" }}>
+            College, international, Hall of Fame and other notable basketball achievements
+            contribute to a player&apos;s overall legacy, but they are kept separate from NBA
+            career statistics and the NBA individual accolade total. Olympic medals are
+            already included in the distinct Olympic subtotal above.
+          </p>
+          {legacyHonors.length === 0 ? (
+            <p>No additional basketball honors have been recorded for this player yet.</p>
+          ) : legacyHonors.map(group => (
+            <div key={group.title} style={{ marginBottom: "1.5rem" }}>
+              <h3>{group.title}</h3>
+              <ul>
+                {group.records.map(accolade => (
+                  <li key={accolade.id}>
+                    <strong>{accolade.accolade_name}</strong>
+                    {formatAccoladeDetails(accolade) ? ` — ${formatAccoladeDetails(accolade)}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          <p style={{ color: "#bbb" }}>
+            Listed honors reflect available records and may require further verification.
+            No legacy-honors score or weighting is implied.
+          </p>
+        </details>
+      </section>
+
     </main>
   );
 }
