@@ -1,6 +1,7 @@
 export type AccoladeRecord = {
   league: string | null;
   accolade_name: string;
+  accolade_type?: string | null;
   result?: string | null;
   season_year?: number | null;
   season_label?: string | null;
