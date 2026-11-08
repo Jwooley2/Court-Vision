@@ -121,7 +121,7 @@ export default async function PlayerProfilePage({
 
   const profile = await readPlayerProfile(id);
   if (!profile) notFound();
-  const { player, careerStats, accolades } = profile;
+  const { player, careerStats, accolades, playoffs } = profile;
   // Comparison directory is optional: an outage must not hide the player profile.
   const comparisonPlayers = await readPlayers({}).catch(() => []);
 
@@ -222,7 +222,7 @@ export default async function PlayerProfilePage({
       </section>
 
       <CareerStatsPanel playerId={Number(id)} playerName={player.name}
-        regular={careerStats} players={comparisonPlayers as ComparePlayer[]} />
+        regular={careerStats} playoffs={playoffs} players={comparisonPlayers as ComparePlayer[]} />
 
       <section style={{ marginBottom: "2rem" }} aria-labelledby="individual-honors-heading">
         <h2 id="individual-honors-heading">Individual Accolades</h2>
