@@ -4,6 +4,8 @@ import { readPlayerProfile, readPlayers } from "./player-data";
 import { PlayerDataError, withPlayerRead } from "./supabase";
 import { renderToStaticMarkup } from "react-dom/server";
 import PlayerProfilePage from "../app/players/[id]/page";
+import CareerStatsPanel from "../app/players/[id]/CareerStatsPanel";
+import { createElement } from "react";
 import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
 
 const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -183,4 +185,21 @@ test("one deadline covers serial stages and cancels concurrent reads", async () 
   }, 50), { message: "Player data unavailable (timeout)" });
   assert.equal(aborted, 2);
   assert.ok(performance.now() - start < 500);
+});
+
+
+test("career panel shows six basic metrics and view controls without inventing missing values", () => {
+  const html = renderToStaticMarkup(createElement(CareerStatsPanel, {
+    playerId: 1,
+    playerName: "Fixture Player",
+    regular: { career_ppg: 30.1, career_rpg: null, career_fg_pct: 0.497 },
+    players: [{ id: 1, name: "Fixture Player" }, { id: 2, name: "Opponent", player_career_stats: null }],
+  }));
+  for (const label of ["Regular Season", "Playoffs", "Compare", "PPG", "RPG", "APG", "SPG", "BPG", "FG%"]) {
+    assert.ok(html.includes(label), `missing ${label}`);
+  }
+  assert.ok(html.includes("30.1"));
+  assert.ok(html.includes("49.7%"));
+  assert.ok(html.includes("—")); // unknown RPG/other metrics are not zeros
+  assert.ok(!html.includes("Verified playoff career summaries")); // not mislabeled as regular stats
 });
