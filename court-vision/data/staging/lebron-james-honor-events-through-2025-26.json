@@ -1,0 +1,664 @@
+{
+  "schema_version": 1,
+  "status": "staged_review_only",
+  "allow_production_import": false,
+  "player_external_id": "lebron_james",
+  "cutoff": "2025-26",
+  "nba_award_events": 61,
+  "olympic_medal_events": 4,
+  "events": [
+    {
+      "league": "NBA",
+      "accolade_name": "NBA MVP",
+      "accolade_type": "mvp",
+      "result": null,
+      "season_year": 2009,
+      "season_label": "2008-09",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA MVP",
+      "accolade_type": "mvp",
+      "result": null,
+      "season_year": 2010,
+      "season_label": "2009-10",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA MVP",
+      "accolade_type": "mvp",
+      "result": null,
+      "season_year": 2012,
+      "season_label": "2011-12",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA MVP",
+      "accolade_type": "mvp",
+      "result": null,
+      "season_year": 2013,
+      "season_label": "2012-13",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA Finals MVP",
+      "accolade_type": "finals_mvp",
+      "result": null,
+      "season_year": 2012,
+      "season_label": "2011-12",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA Finals MVP",
+      "accolade_type": "finals_mvp",
+      "result": null,
+      "season_year": 2013,
+      "season_label": "2012-13",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA Finals MVP",
+      "accolade_type": "finals_mvp",
+      "result": null,
+      "season_year": 2016,
+      "season_label": "2015-16",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA Finals MVP",
+      "accolade_type": "finals_mvp",
+      "result": null,
+      "season_year": 2020,
+      "season_label": "2019-20",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA Rookie of the Year",
+      "accolade_type": "rookie_award",
+      "result": null,
+      "season_year": 2004,
+      "season_label": "2003-04",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Rookie Team",
+      "accolade_type": "rookie_award",
+      "result": "First Team",
+      "season_year": 2004,
+      "season_label": "2003-04",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2006,
+      "season_label": "2005-06",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2008,
+      "season_label": "2007-08",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2009,
+      "season_label": "2008-09",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2010,
+      "season_label": "2009-10",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2011,
+      "season_label": "2010-11",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2012,
+      "season_label": "2011-12",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2013,
+      "season_label": "2012-13",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2014,
+      "season_label": "2013-14",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2015,
+      "season_label": "2014-15",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2016,
+      "season_label": "2015-16",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2017,
+      "season_label": "2016-17",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2018,
+      "season_label": "2017-18",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "First Team",
+      "season_year": 2020,
+      "season_label": "2019-20",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "Second Team",
+      "season_year": 2005,
+      "season_label": "2004-05",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "Second Team",
+      "season_year": 2007,
+      "season_label": "2006-07",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "Second Team",
+      "season_year": 2021,
+      "season_label": "2020-21",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "Second Team",
+      "season_year": 2025,
+      "season_label": "2024-25",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "Third Team",
+      "season_year": 2019,
+      "season_label": "2018-19",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "Third Team",
+      "season_year": 2022,
+      "season_label": "2021-22",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "Third Team",
+      "season_year": 2023,
+      "season_label": "2022-23",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "All-NBA",
+      "accolade_type": "all_nba",
+      "result": "Third Team",
+      "season_year": 2024,
+      "season_label": "2023-24",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Defensive Team",
+      "accolade_type": "all_defense",
+      "result": "First Team",
+      "season_year": 2009,
+      "season_label": "2008-09",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Defensive Team",
+      "accolade_type": "all_defense",
+      "result": "First Team",
+      "season_year": 2010,
+      "season_label": "2009-10",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Defensive Team",
+      "accolade_type": "all_defense",
+      "result": "First Team",
+      "season_year": 2011,
+      "season_label": "2010-11",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Defensive Team",
+      "accolade_type": "all_defense",
+      "result": "First Team",
+      "season_year": 2012,
+      "season_label": "2011-12",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Defensive Team",
+      "accolade_type": "all_defense",
+      "result": "First Team",
+      "season_year": 2013,
+      "season_label": "2012-13",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Defensive Team",
+      "accolade_type": "all_defense",
+      "result": "Second Team",
+      "season_year": 2014,
+      "season_label": "2013-14",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2005,
+      "season_label": "2005",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2006,
+      "season_label": "2006",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2007,
+      "season_label": "2007",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2008,
+      "season_label": "2008",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2009,
+      "season_label": "2009",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2010,
+      "season_label": "2010",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2011,
+      "season_label": "2011",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2012,
+      "season_label": "2012",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2013,
+      "season_label": "2013",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2014,
+      "season_label": "2014",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2015,
+      "season_label": "2015",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2016,
+      "season_label": "2016",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2017,
+      "season_label": "2017",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2018,
+      "season_label": "2018",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2019,
+      "season_label": "2019",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2020,
+      "season_label": "2020",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2021,
+      "season_label": "2021",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2022,
+      "season_label": "2022",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2023,
+      "season_label": "2023",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2024,
+      "season_label": "2024",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2025,
+      "season_label": "2025",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA All-Star",
+      "accolade_type": "all_star",
+      "result": null,
+      "season_year": 2026,
+      "season_label": "2026",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA Scoring Champion",
+      "accolade_type": "statistical_title",
+      "result": null,
+      "season_year": 2008,
+      "season_label": "2007-08",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "NBA",
+      "accolade_name": "NBA Assists Leader",
+      "accolade_type": "statistical_title",
+      "result": null,
+      "season_year": 2020,
+      "season_label": "2019-20",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+    },
+    {
+      "league": "Olympics",
+      "accolade_type": "international",
+      "accolade_name": "Olympic Bronze Medal",
+      "season_year": 2004,
+      "result": "Bronze Medal",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.usab.com/players/lebron-james"
+    },
+    {
+      "league": "Olympics",
+      "accolade_type": "international",
+      "accolade_name": "Olympic Gold Medal",
+      "season_year": 2008,
+      "result": "Gold Medal",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.usab.com/players/lebron-james"
+    },
+    {
+      "league": "Olympics",
+      "accolade_type": "international",
+      "accolade_name": "Olympic Gold Medal",
+      "season_year": 2012,
+      "result": "Gold Medal",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.usab.com/players/lebron-james"
+    },
+    {
+      "league": "Olympics",
+      "accolade_type": "international",
+      "accolade_name": "Olympic Gold Medal",
+      "season_year": 2024,
+      "result": "Gold Medal",
+      "review_status": "staged_pending_event_level_cross_check",
+      "source_url": "https://www.usab.com/players/lebron-james"
+    }
+  ],
+  "source_notes": [
+    "Award seasons and All-NBA tiers transcribed from Land of Basketball achievement timeline; category totals cross-checked with NBA.com official player and All-NBA history.",
+    "All-Defensive teams checked against NBA official year-by-year list.",
+    "Individual event review_status is not cross_checked until each event is independently verified; do not import this file.",
+    "NBA All-Star years are calendar-year labels; other NBA award years are season-ending years.",
+    "All-Star selections are not individual All-Star Game MVP awards."
+  ]
+}
