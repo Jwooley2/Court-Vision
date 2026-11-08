@@ -4,6 +4,7 @@ import { readPlayerProfile, readPlayers } from "@/lib/player-data";
 import CareerStatsPanel, { ComparePlayer } from "./CareerStatsPanel";
 import { summarizeAccolades } from "@/lib/accolade-summary";
 import { groupLegacyHonors } from "@/lib/legacy-honors";
+import { readPlayoffShooting } from "@/lib/playoff-shooting-sources";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -122,6 +123,10 @@ export default async function PlayerProfilePage({
   const profile = await readPlayerProfile(id);
   if (!profile) notFound();
   const { player, careerStats, accolades, playoffs } = profile;
+  const playoffShooting = readPlayoffShooting(player.external_id, playoffs.games);
+  const playoffSummary = playoffShooting && playoffs.summary
+    ? { ...playoffs, summary: { ...playoffs.summary, career_fg_pct: playoffShooting.percentage } }
+    : playoffs;
   // Comparison directory is optional: an outage must not hide the player profile.
   const comparisonPlayers = await readPlayers({}).catch(() => []);
 
@@ -222,7 +227,8 @@ export default async function PlayerProfilePage({
       </section>
 
       <CareerStatsPanel playerId={Number(id)} playerName={player.name}
-        regular={careerStats} playoffs={playoffs} players={comparisonPlayers as ComparePlayer[]} />
+        regular={careerStats} playoffs={playoffSummary} playoffShooting={playoffShooting}
+        players={comparisonPlayers as ComparePlayer[]} />
 
       <section style={{ marginBottom: "2rem" }} aria-labelledby="individual-honors-heading">
         <h2 id="individual-honors-heading">Individual Accolades</h2>
