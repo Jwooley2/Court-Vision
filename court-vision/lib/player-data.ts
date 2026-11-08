@@ -1,4 +1,5 @@
 import { withPlayerRead } from "./supabase";
+import { summarizePlayoffSeasons, type PlayoffSeasonRow } from "./playoff-summary";
 
 export type PlayerFilters = { search?: string; position?: string; era?: string };
 
@@ -28,19 +29,24 @@ export async function readPlayerProfile(id: string) {
       .select("*").eq("id", id).maybeSingle().retry(false);
     if (error) throw error;
     if (!player) return null;
-    const [career, accolades] = await Promise.all([
+    const [career, accolades, playoffRows] = await Promise.all([
       client.from("player_career_stats").select("*").eq("player_id", id).maybeSingle().retry(false),
       client.from("player_accolades").select("*").eq("player_id", id)
         .order("season_year", { ascending: true, nullsFirst: false })
         .order("accolade_name", { ascending: true }).retry(false),
+      client.from("player_seasons")
+        .select("season_year,stint_type,games_played,points_total,rebounds_total,assists_total,steals_total,blocks_total,verification_status")
+        .eq("player_id", id).eq("league", "NBA").eq("season_type", "playoffs")
+        .order("season_year", { ascending: true }).retry(false),
     ]);
-    if (career.error || accolades.error) {
-      throw career.error || accolades.error;
+    if (career.error || accolades.error || playoffRows.error) {
+      throw career.error || accolades.error || playoffRows.error;
     }
     return {
       player,
       careerStats: career.data,
       accolades: accolades.data ?? [],
+      playoffs: summarizePlayoffSeasons((playoffRows.data ?? []) as PlayoffSeasonRow[]),
     };
   });
 }
