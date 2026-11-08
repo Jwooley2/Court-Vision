@@ -14,8 +14,9 @@
       "result": null,
       "season_year": 2009,
       "season_label": "2008-09",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -24,8 +25,9 @@
       "result": null,
       "season_year": 2010,
       "season_label": "2009-10",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -34,8 +36,9 @@
       "result": null,
       "season_year": 2012,
       "season_label": "2011-12",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -44,8 +47,9 @@
       "result": null,
       "season_year": 2013,
       "season_label": "2012-13",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -54,8 +58,9 @@
       "result": null,
       "season_year": 2012,
       "season_label": "2011-12",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -64,8 +69,9 @@
       "result": null,
       "season_year": 2013,
       "season_label": "2012-13",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -74,8 +80,9 @@
       "result": null,
       "season_year": 2016,
       "season_label": "2015-16",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -84,8 +91,9 @@
       "result": null,
       "season_year": 2020,
       "season_label": "2019-20",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -114,8 +122,9 @@
       "result": "First Team",
       "season_year": 2006,
       "season_label": "2005-06",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -124,8 +133,9 @@
       "result": "First Team",
       "season_year": 2008,
       "season_label": "2007-08",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -134,8 +144,9 @@
       "result": "First Team",
       "season_year": 2009,
       "season_label": "2008-09",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -144,8 +155,9 @@
       "result": "First Team",
       "season_year": 2010,
       "season_label": "2009-10",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -154,8 +166,9 @@
       "result": "First Team",
       "season_year": 2011,
       "season_label": "2010-11",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -164,8 +177,9 @@
       "result": "First Team",
       "season_year": 2012,
       "season_label": "2011-12",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -174,8 +188,9 @@
       "result": "First Team",
       "season_year": 2013,
       "season_label": "2012-13",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -184,8 +199,9 @@
       "result": "First Team",
       "season_year": 2014,
       "season_label": "2013-14",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -194,8 +210,9 @@
       "result": "First Team",
       "season_year": 2015,
       "season_label": "2014-15",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -204,8 +221,9 @@
       "result": "First Team",
       "season_year": 2016,
       "season_label": "2015-16",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -214,8 +232,9 @@
       "result": "First Team",
       "season_year": 2017,
       "season_label": "2016-17",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -224,8 +243,9 @@
       "result": "First Team",
       "season_year": 2018,
       "season_label": "2017-18",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -234,8 +254,9 @@
       "result": "First Team",
       "season_year": 2020,
       "season_label": "2019-20",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -244,8 +265,9 @@
       "result": "Second Team",
       "season_year": 2005,
       "season_label": "2004-05",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -254,8 +276,9 @@
       "result": "Second Team",
       "season_year": 2007,
       "season_label": "2006-07",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -264,8 +287,9 @@
       "result": "Second Team",
       "season_year": 2021,
       "season_label": "2020-21",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -274,8 +298,9 @@
       "result": "Second Team",
       "season_year": 2025,
       "season_label": "2024-25",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -284,8 +309,9 @@
       "result": "Third Team",
       "season_year": 2019,
       "season_label": "2018-19",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -294,8 +320,9 @@
       "result": "Third Team",
       "season_year": 2022,
       "season_label": "2021-22",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -304,8 +331,9 @@
       "result": "Third Team",
       "season_year": 2023,
       "season_label": "2022-23",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -314,8 +342,9 @@
       "result": "Third Team",
       "season_year": 2024,
       "season_label": "2023-24",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -324,8 +353,9 @@
       "result": "First Team",
       "season_year": 2009,
       "season_label": "2008-09",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -334,8 +364,9 @@
       "result": "First Team",
       "season_year": 2010,
       "season_label": "2009-10",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -344,8 +375,9 @@
       "result": "First Team",
       "season_year": 2011,
       "season_label": "2010-11",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -354,8 +386,9 @@
       "result": "First Team",
       "season_year": 2012,
       "season_label": "2011-12",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -364,8 +397,9 @@
       "result": "First Team",
       "season_year": 2013,
       "season_label": "2012-13",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -374,8 +408,9 @@
       "result": "Second Team",
       "season_year": 2014,
       "season_label": "2013-14",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.landofbasketball.com/nba_players_achievements/lebron_james.htm",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "NBA",
@@ -623,8 +658,9 @@
       "accolade_name": "Olympic Bronze Medal",
       "season_year": 2004,
       "result": "Bronze Medal",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.usab.com/players/lebron-james"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.usab.com/players/lebron-james",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "Olympics",
@@ -632,8 +668,9 @@
       "accolade_name": "Olympic Gold Medal",
       "season_year": 2008,
       "result": "Gold Medal",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.usab.com/players/lebron-james"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.usab.com/players/lebron-james",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "Olympics",
@@ -641,8 +678,9 @@
       "accolade_name": "Olympic Gold Medal",
       "season_year": 2012,
       "result": "Gold Medal",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.usab.com/players/lebron-james"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.usab.com/players/lebron-james",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     },
     {
       "league": "Olympics",
@@ -650,8 +688,9 @@
       "accolade_name": "Olympic Gold Medal",
       "season_year": 2024,
       "result": "Gold Medal",
-      "review_status": "staged_pending_event_level_cross_check",
-      "source_url": "https://www.usab.com/players/lebron-james"
+      "review_status": "cross_checked_year_and_tier",
+      "source_url": "https://www.usab.com/players/lebron-james",
+      "secondary_source_url": "https://www.nba.com/gamenotes/sixers.pdf"
     }
   ],
   "source_notes": [
@@ -661,6 +700,7 @@
     "NBA All-Star years are calendar-year labels; other NBA award years are season-ending years.",
     "All-Star selections are not individual All-Star Game MVP awards.",
     "NBA 76ers 2026-27 game notes independently list LeBron's season-ending years and team tiers for 4 MVPs, 4 Finals MVPs, 21 All-NBA (13/4/4), and 6 All-Defensive (5/1), as well as Olympic medals: https://www.nba.com/gamenotes/sixers.pdf",
-    "NBA official career totals fixed at 2025-26: https://www.nba.com/stats/alltime-leaders?CF=PTS%2AGE%2A35000&SeasonType=Regular+Season; independent snapshot: https://www.sports-reference.com/stathead/basketball/vs/lebron-james-vs-michael-jordan"
+    "NBA official career totals fixed at 2025-26: https://www.nba.com/stats/alltime-leaders?CF=PTS%2AGE%2A35000&SeasonType=Regular+Season; independent snapshot: https://www.sports-reference.com/stathead/basketball/vs/lebron-james-vs-michael-jordan",
+    "39 award/medal events cross-checked for season and tier against the NBA 2026-27 Sixers official game notes; the remaining 26 event years still need individual official verification. No production write is approved."
   ]
 }
