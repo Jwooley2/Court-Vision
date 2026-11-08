@@ -5,6 +5,7 @@ import CareerStatsPanel, { ComparePlayer } from "./CareerStatsPanel";
 import { summarizeAccolades } from "@/lib/accolade-summary";
 import { groupLegacyHonors } from "@/lib/legacy-honors";
 import { readPlayoffShooting } from "@/lib/playoff-shooting-sources";
+import { getPlayerBio, renderBioSegments } from "@/lib/player-bios";
 
 function formatStat(value: number | string | null | undefined, decimals = 1) {
   if (value === null || value === undefined) return "—";
@@ -123,6 +124,7 @@ export default async function PlayerProfilePage({
   const profile = await readPlayerProfile(id);
   if (!profile) notFound();
   const { player, careerStats, accolades, playoffs } = profile;
+  const bio = getPlayerBio(player.external_id);
   const playoffShooting = readPlayoffShooting(player.external_id, playoffs.games);
   const playoffSummary = playoffShooting && playoffs.summary
     ? { ...playoffs, summary: { ...playoffs.summary, career_fg_pct: playoffShooting.percentage } }
@@ -187,6 +189,29 @@ export default async function PlayerProfilePage({
 
       <p style={{ color: "#bbb", marginBottom: "2rem" }}>
         {player.position} • {player.era}
+      </p>
+
+      {bio ? (
+        <section aria-label="Player story" style={{
+          padding: "1.25rem 1.5rem", marginBottom: "2rem",
+          background: "#161616", borderLeft: "3px solid #c8a963", borderRadius: 8,
+        }}>
+          <h2 style={{ fontSize: "1.1rem", marginTop: 0 }}>Beyond the Numbers</h2>
+          <p style={{ lineHeight: 1.8, marginBottom: 0 }}>
+            {renderBioSegments(bio.narrative).map((part, index) =>
+              part.emphasized
+                ? <strong key={index}>{part.text}</strong>
+                : <span key={index}>{part.text}</span>
+            )}
+          </p>
+        </section>
+      ) : (
+        <p role="status">This player's personal story is awaiting editorial review.</p>
+      )}
+      <p style={{ marginBottom: "1.75rem" }}>
+        <Link href={`/compare?left=${id}&right=${Number(id) === 1 ? 7 : 1}`}>
+          Compare {player.name} with another player →
+        </Link>
       </p>
 
       {(!careerStats || typedAccolades.length === 0) && (
