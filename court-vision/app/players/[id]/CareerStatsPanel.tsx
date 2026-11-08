@@ -37,11 +37,12 @@ function getCareer(player: ComparePlayer): CareerSummary | null {
 }
 
 export default function CareerStatsPanel({
-  playerId, playerName, regular, players,
+  playerId, playerName, regular, playoffs, players,
 }: {
   playerId: number;
   playerName: string;
   regular: CareerSummary | null;
+  playoffs: { summary: CareerSummary | null; games: number; seasons: number; provisional: boolean };
   players: ComparePlayer[];
 }) {
   const [mode, setMode] = useState<"regular" | "playoffs" | "compare">("regular");
@@ -68,11 +69,35 @@ export default function CareerStatsPanel({
         ))}
       </div>
       {mode === "playoffs" ? (
-        <p role="status">
-          Verified playoff career summaries are not available in the current career-summary record.
-          No regular-season numbers are being substituted. Playoff data will appear when separately
-          sourced and validated.
-        </p>
+        <div>
+          {!playoffs.summary ? (
+            <p role="status">Playoff career statistics have not been recorded for this player yet.</p>
+          ) : (
+            <>
+              <p>{playoffs.games} playoff games across {playoffs.seasons} postseasons.
+                {playoffs.provisional ? " Season records are pending independent cross-check." : ""}
+              </p>
+              <div style={{
+                display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
+                gap: "1rem",
+              }}>
+                {metrics.map(metric => (
+                  <div key={metric.key}>
+                    <strong style={{ fontSize: "1.65rem" }}>
+                      {format(playoffs.summary?.[metric.key], metric.pct)}
+                    </strong>
+                    <div style={{ color: "#999" }}>{metric.label}</div>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: "0.875rem", color: "#999" }}>
+                Career playoff averages are calculated from recorded season totals divided by
+                playoff games. FG% is unavailable until career makes and attempts are verified.
+                No regular-season shooting figure is substituted.
+              </p>
+            </>
+          )}
+        </div>
       ) : mode === "compare" ? (
         <div>
           <label htmlFor="comparison-opponent">Compare {playerName} with </label>
