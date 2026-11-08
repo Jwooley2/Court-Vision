@@ -4,6 +4,7 @@ import { readPlayerProfile, readPlayers } from "./player-data";
 import { PlayerDataError, withPlayerRead } from "./supabase";
 import { renderToStaticMarkup } from "react-dom/server";
 import PlayerProfilePage from "../app/players/[id]/page";
+import PlayersPage from "../app/players/page";
 import CareerStatsPanel from "../app/players/[id]/CareerStatsPanel";
 import { createElement } from "react";
 import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
@@ -521,4 +522,19 @@ test("compare route serves real player options and selects two different profile
   assert.ok(html.includes("LeBron James"));
   assert.ok(html.includes("Your Debate. Your Criteria."));
   assert.ok(html.includes("What matters to you"));
+});
+
+test("every currently hosted player directory card has its own short story teaser", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([
+      { id: 1, name: "Michael Jordan", external_id: "michael_jordan", championships: 6, mvps: 5, player_career_stats: [] },
+      { id: 7, name: "LeBron James", external_id: "lebron_james", championships: 4, mvps: 4, player_career_stats: [] },
+    ]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await PlayersPage({searchParams: Promise.resolve({})}));
+  assert.ok(html.includes("Cut from his high school"));
+  assert.ok(html.includes("From the streets of Akron"));
+  assert.ok(html.includes("Michael Jordan"));
+  assert.ok(html.includes("LeBron James"));
 });
