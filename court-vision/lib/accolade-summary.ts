@@ -19,6 +19,7 @@ const NBA_CATEGORIES = [
   ["All-Rookie", "NBA All-Rookie Team"],
   ["Scoring Titles", "NBA Scoring Champion"],
   ["Steals Titles", "NBA Steals Leader"],
+  ["Assists Titles", "NBA Assists Leader"],
 ] as const;
 
 export function summarizeAccolades(records: AccoladeRecord[]) {
