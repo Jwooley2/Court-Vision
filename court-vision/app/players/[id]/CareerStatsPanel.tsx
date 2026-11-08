@@ -37,12 +37,13 @@ function getCareer(player: ComparePlayer): CareerSummary | null {
 }
 
 export default function CareerStatsPanel({
-  playerId, playerName, regular, playoffs, players,
+  playerId, playerName, regular, playoffs, playoffShooting, players,
 }: {
   playerId: number;
   playerName: string;
   regular: CareerSummary | null;
   playoffs: { summary: CareerSummary | null; games: number; seasons: number; provisional: boolean };
+  playoffShooting?: { percentage: number; fgm: number; fga: number; primaryUrl: string; crossCheckUrl: string; asOf: string } | null;
   players: ComparePlayer[];
 }) {
   const [mode, setMode] = useState<"regular" | "playoffs" | "compare">("regular");
@@ -92,9 +93,18 @@ export default function CareerStatsPanel({
               </div>
               <p style={{ fontSize: "0.875rem", color: "#999" }}>
                 Career playoff averages are calculated from recorded season totals divided by
-                playoff games. FG% is unavailable until career makes and attempts are verified.
-                No regular-season shooting figure is substituted.
+                playoff games. {playoffShooting
+                  ? "FG% is calculated from cross-checked career field goals made and attempted."
+                  : "FG% is unavailable until career makes and attempts are verified."}
+                {" "}No regular-season shooting figure is substituted.
               </p>
+              {playoffShooting && (
+                <p style={{ fontSize: "0.875rem", color: "#999" }}>
+                  Playoff shooting: {playoffShooting.fgm.toLocaleString()} / {playoffShooting.fga.toLocaleString()} FGM/FGA.
+                  {" "}Sources: <a href={playoffShooting.primaryUrl} target="_blank" rel="noreferrer">NBA</a>
+                  {" "}and <a href={playoffShooting.crossCheckUrl} target="_blank" rel="noreferrer">UNC record book</a>.
+                </p>
+              )}
             </>
           )}
         </div>
