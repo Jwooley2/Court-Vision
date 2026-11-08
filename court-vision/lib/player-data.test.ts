@@ -10,6 +10,7 @@ import { isPreviewFixtureMode, previewFixtureFetch } from "./preview-fixtures";
 import { summarizeAccolades, AccoladeRecord } from "./accolade-summary";
 import { groupLegacyHonors } from "./legacy-honors";
 import { summarizePlayoffSeasons } from "./playoff-summary";
+import { readPlayoffShooting } from "./playoff-shooting-sources";
 
 const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -203,6 +204,7 @@ test("career panel shows six basic metrics and view controls without inventing m
     playerName: "Fixture Player",
     regular: { career_ppg: 30.1, career_rpg: null, career_fg_pct: 0.497 },
     playoffs: { summary: null, games: 0, seasons: 0, provisional: true },
+    playoffShooting: null,
     players: [{ id: 1, name: "Fixture Player" }, { id: 2, name: "Opponent", player_career_stats: null }],
   }));
   for (const label of ["Regular Season", "Playoffs", "Compare", "PPG", "RPG", "APG", "SPG", "BPG", "FG%"]) {
@@ -321,4 +323,32 @@ test("playoff totals never double-count combined and team stint records", () => 
   assert.equal(summary.summary?.career_rpg, 3.8);
   assert.equal(summary.summary?.career_bpg, null);
   assert.equal(summary.seasons, 2);
+});
+
+test("Jordan's sourced playoff shooting is accurate and guarded by the games count", () => {
+  const shooting = readPlayoffShooting("michael_jordan", 179);
+  assert.ok(shooting);
+  assert.equal(shooting.fgm, 2188);
+  assert.equal(shooting.fga, 4497);
+  assert.equal(Number((shooting.percentage * 100).toFixed(1)), 48.7);
+  assert.ok(shooting.primaryUrl.includes("nba.com"));
+  assert.equal(readPlayoffShooting("michael_jordan", 178), null);
+  assert.equal(readPlayoffShooting("lebron_james", 179), null);
+});
+
+test("profile embeds Jordan's independently sourced playoff percentage only when totals match", async () => {
+  fixture(url => {
+    if (url.pathname.endsWith("/players")) return response([{ id: 1, name: "Michael Jordan", external_id: "michael_jordan" }]);
+    if (url.pathname.endsWith("/player_career_stats")) return response([{ career_ppg: 30.1 }]);
+    if (url.pathname.endsWith("/player_accolades")) return response([]);
+    if (url.pathname.endsWith("/player_seasons")) return response([{
+      season_year: 1991, stint_type: "team", games_played: 179,
+      points_total: 5987, rebounds_total: 1152, assists_total: 1022,
+      steals_total: 376, blocks_total: 158, verification_status: "single_source",
+    }]);
+    return response([]);
+  });
+  const html = renderToStaticMarkup(await PlayerProfilePage({ params: Promise.resolve({ id: "1" }) }));
+  assert.ok(html.includes("Career Averages"));
+  assert.ok(html.includes("Regular Season"));
 });
