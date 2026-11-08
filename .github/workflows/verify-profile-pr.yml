@@ -42,3 +42,5 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
+      - name: Synthetic HTTP route smoke (no database access)
+        run: node scripts/smoke-preview.mjs
