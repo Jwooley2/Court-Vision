@@ -1,0 +1,80 @@
+name: Rehearse LeBron Import in Disposable PostgreSQL
+
+on:
+  push:
+    branches:
+      - scout/lebron-2025-26-career-pilot
+    paths:
+      - 'court-vision/scripts/emit-lebron-rehearsal-sql.mjs'
+      - 'court-vision/data/staging/lebron-james-through-2025-26.json'
+      - 'court-vision/data/staging/lebron-james-honor-events-through-2025-26.json'
+      - '.github/workflows/rehearse-lebron-import.yml'
+  pull_request:
+    paths:
+      - 'court-vision/scripts/emit-lebron-rehearsal-sql.mjs'
+      - 'court-vision/data/staging/lebron-james-through-2025-26.json'
+      - 'court-vision/data/staging/lebron-james-honor-events-through-2025-26.json'
+      - '.github/workflows/rehearse-lebron-import.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  rehearse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout only project source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Configure Node 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Transaction, rollback, idempotency and backup/restore rehearsal
+        shell: bash
+        env:
+          # Intentionally no Supabase URLs, project tokens or production credentials.
+          CI: 'true'
+        run: |
+          set -euo pipefail
+          tempdir="$(mktemp -d)"
+          trap 'docker rm -f cv-lebron-rehearsal >/dev/null 2>&1 || true; rm -rf "$tempdir"' EXIT
+          node court-vision/scripts/emit-lebron-rehearsal-sql.mjs "$tempdir"
+          docker run -d --name cv-lebron-rehearsal -e POSTGRES_PASSWORD=local-rehearsal-only postgres:16 >/dev/null
+          for n in $(seq 1 45); do
+            if docker exec cv-lebron-rehearsal pg_isready -U postgres >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          docker exec cv-lebron-rehearsal pg_isready -U postgres
+          docker exec cv-lebron-rehearsal createdb -U postgres cv_rehearsal
+          docker exec -i cv-lebron-rehearsal psql -X -U postgres -d cv_rehearsal -v ON_ERROR_STOP=1 < "$tempdir/schema.sql"
+          # Backup the disposable baseline and verify it actually exists.
+          docker exec cv-lebron-rehearsal pg_dump -U postgres -Fc -d cv_rehearsal -f /tmp/cv-baseline.dump
+          docker exec cv-lebron-rehearsal sh -c 'test -s /tmp/cv-baseline.dump'
+          echo "PASS: disposable baseline dump exists"
+
+          # Entire import rolled back, even with repeat statements.
+          docker exec -i cv-lebron-rehearsal psql -X -U postgres -d cv_rehearsal -v ON_ERROR_STOP=1 < "$tempdir/rehearse-rollback.sql"
+          echo "PASS: explicit transaction ROLLBACK restores baseline"
+
+          # A deliberate foreign-key error aborts the transaction automatically.
+          if docker exec -i cv-lebron-rehearsal psql -X -U postgres -d cv_rehearsal -v ON_ERROR_STOP=1 < "$tempdir/rehearse-failure.sql" >/tmp/lebron-expected-error.log 2>&1; then
+            echo "FAIL: invalid foreign key unexpectedly succeeded"
+            exit 1
+          fi
+          docker exec -i cv-lebron-rehearsal psql -X -U postgres -d cv_rehearsal -v ON_ERROR_STOP=1 < "$tempdir/verify-restored.sql"
+          echo "PASS: deliberate failure left no partial import"
+
+          # Repeated inserts must be idempotent and affect no Jordan records.
+          docker exec -i cv-lebron-rehearsal psql -X -U postgres -d cv_rehearsal -v ON_ERROR_STOP=1 < "$tempdir/rehearse-commit.sql"
+          docker exec -i cv-lebron-rehearsal psql -X -U postgres -d cv_rehearsal -v ON_ERROR_STOP=1 < "$tempdir/verify-committed.sql"
+          echo "PASS: one career row and 65 honors; repeated import unchanged"
+
+          # Restore the physical dump into an empty disposable DB, then re-check.
+          docker exec cv-lebron-rehearsal dropdb -U postgres cv_rehearsal
+          docker exec cv-lebron-rehearsal createdb -U postgres cv_rehearsal
+          docker exec cv-lebron-rehearsal pg_restore -U postgres -d cv_rehearsal /tmp/cv-baseline.dump
+          docker exec -i cv-lebron-rehearsal psql -X -U postgres -d cv_rehearsal -v ON_ERROR_STOP=1 < "$tempdir/verify-restored.sql"
+          echo "PASS: pg_dump/pg_restore restored two identities and zero career/honor rows"
